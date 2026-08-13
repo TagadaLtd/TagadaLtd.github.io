@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Section from '../components/Section.astro';
 import { DEFAULT_LANG, type Lang } from '../i18n/ui';
 
 // GitHub Pages serves one 404.html for the whole domain, so this page cannot
@@ -9,21 +8,29 @@ import { DEFAULT_LANG, type Lang } from '../i18n/ui';
 const lang = DEFAULT_LANG as Lang;
 ---
 
-<BaseLayout lang={lang} title="Not found — Sébastien Borges Lopes" description="Page not found." noindex>
-  <Section rule={false}>
-    <p class="label">404</p>
-    <h1 class="mt-6 text-h1">Page not found<br /><span class="text-ink-3">Page introuvable</span></h1>
-    <div class="mt-10 flex gap-3">
-      <a
-        href="/en/"
-        class="rounded-md border border-line px-5 py-3 text-sm transition-colors hover:border-line-strong"
-        >English home</a
-      >
-      <a
-        href="/fr/"
-        class="rounded-md border border-line px-5 py-3 text-sm transition-colors hover:border-line-strong"
-        >Accueil français</a
-      >
+<BaseLayout
+  lang={lang}
+  title="Not found — Sébastien Borges Lopes"
+  description="Page not found."
+  noindex
+>
+  <section class="relative overflow-hidden">
+    <div class="plot-paper absolute inset-0 opacity-60" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-plane" aria-hidden="true">
     </div>
-  </Section>
+
+    <div class="shell relative section-y">
+      <p class="num text-ink-3">404</p>
+      <h1 class="mt-6 text-h1">
+        Page not found<br /><span class="text-ink-3">Page introuvable</span>
+      </h1>
+      <p class="measure mt-8 text-lead text-ink-2">
+        The address does not match anything on this site. Start again from either homepage.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href="/en/" hreflang="en" class="btn btn-ghost">English home</a>
+        <a href="/fr/" hreflang="fr" class="btn btn-ghost">Accueil français</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

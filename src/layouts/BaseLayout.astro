@@ -51,14 +51,50 @@ const xDefault = new URL('/', Astro.site);
 
     <meta name="theme-color" content="#0a0c10" />
 
+    <script is:inline>
+      // Inline and in <head> so it runs before paint — no flash of the wrong
+      // theme. Same shape as the language gate at /: a stored choice wins, the
+      // operating system decides otherwise. GitHub Pages serves one file to
+      // everyone, so this is the only place the decision can be made.
+      //
+      // The attribute is always written to an explicit value, which is what
+      // lets the toggle's icon rules stay to two cases instead of six.
+      (function () {
+        var root = document.documentElement;
+        var stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {
+          /* private mode */
+        }
+
+        var theme =
+          stored === 'dark' || stored === 'light'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+
+        root.dataset.theme = theme;
+
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'dark' ? '#0a0c10' : '#f4f5f7');
+
+        // Scroll reveal opts in here rather than in the stylesheet: if this
+        // script never runs, or the browser has no IntersectionObserver, the
+        // hiding rules in global.css never match and the page renders finished.
+        if ('IntersectionObserver' in window) root.classList.add('js-motion');
+      })();
+    </script>
+
     <!-- TODO(analytics): Umami script goes here once the instance exists. -->
     <!-- TODO(favicon): real favicon set. -->
   </head>
 
-  <body class="min-h-screen flex flex-col bg-plane text-ink">
+  <body class="flex min-h-screen flex-col bg-plane text-ink">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-3 focus:left-3 focus:bg-surface focus:text-ink focus:px-4 focus:py-2 focus:rounded-md"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:left-3 focus:top-3 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-ink"
     >
       {t('nav.skip')}
     </a>
@@ -70,5 +106,55 @@ const xDefault = new URL('/', Astro.site);
     </main>
 
     <Footer lang={lang} />
+
+    <script>
+      // Reveal on scroll. Deliberately small and dependency-free: GSAP and
+      // Lenis belong to the motion pass that animates the Data -> Insight ->
+      // Action sequence, and pulling them in for a fade would be a large
+      // budget spent on the least interesting motion on the site.
+      //
+      // Elements reveal once and stay revealed. Nothing re-animates on the way
+      // back up, which is the difference between a page that feels alive and
+      // one that feels twitchy.
+      const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+
+      // Stagger is per group, not per page: siblings under one [data-reveal-group]
+      // come in one after another, and each group starts its count again.
+      document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
+        Array.from(group.children).forEach((child, i) => {
+          if (child instanceof HTMLElement && child.hasAttribute('data-reveal')) {
+            child.style.setProperty('--reveal-i', String(Math.min(i, 6)));
+          }
+        });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add('is-in');
+            observer.unobserve(entry.target);
+          }
+        },
+        // Fires a little before the element reaches the fold, so the movement
+        // has finished by the time it is properly in view.
+        { rootMargin: '0px 0px -12% 0px', threshold: 0.01 }
+      );
+
+      for (const el of targets) observer.observe(el);
+
+      // Backstop for anything the observer missed — a reveal that never fires
+      // is a blank page. Scoped to elements actually on screen, so it repairs
+      // a failure without quietly switching the effect off further down.
+      window.addEventListener('load', () => {
+        window.setTimeout(() => {
+          for (const el of targets) {
+            if (el.classList.contains('is-in')) continue;
+            const box = el.getBoundingClientRect();
+            if (box.top < window.innerHeight && box.bottom > 0) el.classList.add('is-in');
+          }
+        }, 800);
+      });
+    </script>
   </body>
 </html>

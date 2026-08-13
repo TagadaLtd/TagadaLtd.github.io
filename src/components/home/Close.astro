@@ -13,24 +13,27 @@ const { lang, close } = Astro.props;
 const t = useTranslations(lang);
 
 // Two actions, clearly ranked (site-plan.md §4.9): contact is primary, the
-// newsletter is a consolation prize for someone not ready to enquire.
+// newsletter is a consolation prize for someone not ready to enquire. The
+// ranking is carried by weight, not by two competing buttons — the newsletter
+// sits below a rule, at label size, and asks for one field.
 ---
 
-<section class="mx-auto max-w-6xl px-5 py-24 sm:px-8 sm:py-32">
-  <div class="rounded-lg border border-line bg-surface p-8 sm:p-12">
-    <h2 class="max-w-2xl text-h2">{close.title}</h2>
-    <p class="mt-5 measure text-ink-2">{close.body}</p>
+<section class="shell section-y">
+  <div class="relative overflow-hidden rounded-lg border border-line bg-surface" data-reveal>
+    <div class="plot-paper absolute inset-0 opacity-70" aria-hidden="true"></div>
 
-    <a
-      href={localPath(lang, 'contact')}
-      class="mt-8 inline-block rounded-md bg-accent px-5 py-3 text-sm font-medium text-plane transition-opacity hover:opacity-90"
-    >
-      {close.cta}
-    </a>
+    <div class="relative p-8 sm:p-12 lg:p-16">
+      <h2 class="max-w-[18ch] text-h2">{close.title}</h2>
+      <p class="measure mt-6 text-ink-2">{close.body}</p>
 
-    <div class="mt-12 border-t border-line pt-8">
-      <p class="label">{t('footer.newsletter.title')}</p>
-      <NewsletterForm lang={lang} class="mt-4 max-w-md" />
+      <a href={localPath(lang, 'contact')} class="btn btn-primary mt-9">
+        {close.cta}
+      </a>
+
+      <div class="mt-14 border-t border-line pt-8">
+        <p class="label">{t('footer.newsletter.title')}</p>
+        <NewsletterForm lang={lang} class="mt-4 max-w-md" />
+      </div>
     </div>
   </div>
 </section>

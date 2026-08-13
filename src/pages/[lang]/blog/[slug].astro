@@ -32,39 +32,20 @@ const date = entry.data.date.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB
   title={`${entry.data.title} — Sébastien Borges Lopes`}
   description={entry.data.description}
 >
-  <article class="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
+  <article class="shell max-w-3xl py-16 sm:py-24">
     {entry.data.draft && <PlaceholderBadge lang={lang} />}
 
     <p class="label">{date} · {minutes} {t('blog.readingTime')}</p>
-    <h1 class="mt-5 text-h1">{entry.data.title}</h1>
-    <p class="mt-6 measure text-lead text-ink-2">{entry.data.description}</p>
+    <h1 class="mt-6 text-title">{entry.data.title}</h1>
+    <p class="measure mt-8 text-lead text-ink-2">{entry.data.description}</p>
 
-    <div class="prose-body mt-14 rule-t pt-10">
+    <div class="prose-body rule-t mt-14 pt-12">
       <Content />
     </div>
 
-    <div class="mt-16 rule-t pt-10">
+    <div class="rule-t mt-20 pt-10">
       <p class="label">{t('footer.newsletter.title')}</p>
       <NewsletterForm lang={lang} class="mt-4 max-w-md" />
     </div>
   </article>
 </BaseLayout>
-
-<style>
-  .prose-body :global(h2) {
-    font-size: var(--text-h3);
-    margin-top: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .prose-body :global(p) {
-    margin-bottom: 1rem;
-    color: var(--color-ink-2);
-  }
-  .prose-body :global(a) {
-    color: var(--color-accent);
-  }
-  .prose-body :global(code) {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-  }
-</style>

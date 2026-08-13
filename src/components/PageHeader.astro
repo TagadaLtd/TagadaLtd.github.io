@@ -1,0 +1,50 @@
+---
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  /** Mono eyebrow. Defaults to nothing — the title carries the page on its own. */
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  /** Right-hand reading, e.g. "3 case studies". Mono, quiet, optional. */
+  meta?: string;
+}
+
+const { eyebrow, title, intro, meta } = Astro.props;
+
+// One masthead for every interior page, so Work, Blog and the stubs all open on
+// the same line and at the same size. The plot paper carries over from the
+// homepage band at a lower opacity — enough to say "same site", not enough to
+// compete with the heading.
+---
+
+<header class="relative overflow-hidden border-b border-line">
+  <div class="plot-paper absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-transparent to-plane"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative pb-14 pt-16 sm:pb-20 sm:pt-24" data-reveal-group>
+    {eyebrow && (
+      <p class="label" data-reveal>
+        {eyebrow}
+      </p>
+    )}
+    <h1 class:list={['max-w-[16ch] text-h1', eyebrow && 'mt-6']} data-reveal>
+      {title}
+    </h1>
+    {intro && (
+      <p class="measure mt-8 text-lead text-ink-2" data-reveal>
+        {intro}
+      </p>
+    )}
+    {meta && (
+      <p class="label mt-10" data-reveal>
+        {meta}
+      </p>
+    )}
+  </div>
+</header>

@@ -33,6 +33,27 @@ const site = Astro.site ?? new URL('https://example.com');
     <meta name="theme-color" content="#0a0c10" />
 
     <script is:inline>
+      // Same theme resolution as BaseLayout. Duplicated rather than imported
+      // because this page has its own <head> and must decide before paint, and
+      // a visitor who set a theme should not see this gate flash the other one
+      // on the way through.
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {
+          /* private mode */
+        }
+        document.documentElement.dataset.theme =
+          stored === 'dark' || stored === 'light'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+      })();
+    </script>
+
+    <script is:inline>
       // Inline and in <head> so it runs before paint — a visitor with JS should
       // never see the chooser flash. A remembered choice always wins over the
       // browser's guess, so switching to French sticks on the next visit.
@@ -54,29 +75,29 @@ const site = Astro.site ?? new URL('https://example.com');
     </script>
   </head>
 
-  <body class="bg-plane text-ink">
+  <body class="plot-paper bg-plane text-ink">
     <main class="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-16">
       <p class="label">Sébastien Borges Lopes</p>
-      <h1 class="mt-6 text-h2">Choose a language · Choisissez une langue</h1>
+      <h1 class="mt-7 text-h2">Choose a language<br />Choisissez une langue</h1>
 
-      <div class="mt-10 grid gap-3">
+      <div class="mt-12 grid gap-3">
         <a
           href="/en/"
           hreflang="en"
           lang="en"
-          class="rounded-lg border border-line bg-surface px-5 py-4 transition-colors hover:border-line-strong"
+          class="card flex items-baseline gap-4 px-5 py-4"
         >
-          <span class="font-mono text-xs uppercase tracking-widest text-ink-3">EN</span>
-          <span class="mt-1 block">English</span>
+          <span class="num text-sm text-ink-3">EN</span>
+          <span>English</span>
         </a>
         <a
           href="/fr/"
           hreflang="fr"
           lang="fr"
-          class="rounded-lg border border-line bg-surface px-5 py-4 transition-colors hover:border-line-strong"
+          class="card flex items-baseline gap-4 px-5 py-4"
         >
-          <span class="font-mono text-xs uppercase tracking-widest text-ink-3">FR</span>
-          <span class="mt-1 block">Français</span>
+          <span class="num text-sm text-ink-3">FR</span>
+          <span>Français</span>
         </a>
       </div>
     </main>

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import Section from '../../../components/Section.astro';
+import PageHeader from '../../../components/PageHeader.astro';
 import WorkCard from '../../../components/WorkCard.astro';
 import { LANGS, useTranslations, type Lang } from '../../../i18n/ui';
 import { getWork } from '../../../lib/content';
@@ -24,22 +24,21 @@ const intro =
   title={`${t('nav.work')} — Sébastien Borges Lopes`}
   description={intro}
 >
-  <Section label={t('nav.work')} rule={false}>
-    <h1 class="text-h1">{t('nav.work')}</h1>
-    <p class="mt-8 measure text-ink-2">{intro}</p>
+  <PageHeader lang={lang} title={t('nav.work')} intro={intro} />
 
-    <div class="mt-16 grid gap-6 md:grid-cols-3">
+  <section class="shell section-y">
+    <div class="grid gap-6 md:grid-cols-3" data-reveal-group>
       {entries.map((entry) => <WorkCard lang={lang} entry={entry} />)}
     </div>
 
     {
       entries.length === 0 && (
-        <p class="mt-16 measure text-ink-2">
+        <p class="measure text-ink-2">
           {lang === 'fr'
             ? 'Rien de publié pour l’instant : une étude de cas sans chiffre réel n’en est pas une.'
             : 'Nothing published yet — a case study without a real number is not a case study.'}
         </p>
       )
     }
-  </Section>
+  </section>
 </BaseLayout>

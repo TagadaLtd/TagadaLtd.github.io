@@ -33,13 +33,13 @@ const meta = [
 ---
 
 <BaseLayout lang={lang} title={`${d.title} — Sébastien Borges Lopes`} description={d.summary}>
-  <article class="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
+  <article class="shell max-w-4xl py-16 sm:py-24">
     {d.draft && <PlaceholderBadge lang={lang} />}
 
-    <h1 class="text-h1">{d.title}</h1>
-    <p class="mt-6 measure text-lead text-ink-2">{d.summary}</p>
+    <h1 class="max-w-[20ch] text-title">{d.title}</h1>
+    <p class="measure mt-8 text-lead text-ink-2">{d.summary}</p>
 
-    <dl class="mt-12 grid gap-6 rule-t pt-8 sm:grid-cols-3 lg:grid-cols-5">
+    <dl class="rule-t mt-14 grid gap-6 pt-8 sm:grid-cols-3 lg:grid-cols-5">
       {
         meta.map(([label, value]) => (
           <div>
@@ -54,7 +54,7 @@ const meta = [
       d.tools.length > 0 && (
         <ul class="mt-8 flex flex-wrap gap-2">
           {d.tools.map((tool) => (
-            <li class="rounded-sm border border-line px-3 py-1.5 font-mono text-xs text-ink-3">
+            <li class="rounded-sm border border-line px-2.5 py-1.5 font-mono text-meta text-ink-3">
               {tool}
             </li>
           ))}
@@ -66,10 +66,8 @@ const meta = [
       d.results.length > 0 && (
         <dl class="mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
           {d.results.map((r) => (
-            <div class="bg-surface p-7">
-              <dd class="font-mono text-h2 leading-none text-[color:var(--color-accent)]">
-                {r.value}
-              </dd>
+            <div class="bg-surface p-7 lg:p-8">
+              <dd class="num text-stat leading-none text-accent">{r.value}</dd>
               <dt class="mt-4 text-sm text-ink-2">{r.label}</dt>
               {r.note && <p class="mt-2 text-xs text-ink-3">{r.note}</p>}
             </div>
@@ -82,11 +80,8 @@ const meta = [
       <Content />
     </div>
 
-    <div class="mt-16 rule-t pt-10">
-      <a
-        href={localPath(lang, 'contact')}
-        class="inline-block rounded-md bg-accent px-5 py-3 text-sm font-medium text-plane transition-opacity hover:opacity-90"
-      >
+    <div class="rule-t mt-16 pt-10">
+      <a href={localPath(lang, 'contact')} class="btn btn-primary">
         {
           lang === 'fr'
             ? 'Un problème similaire ? Parlons-en.'
@@ -96,20 +91,3 @@ const meta = [
     </div>
   </article>
 </BaseLayout>
-
-<style>
-  /* Local prose rules. A full typography pass replaces these. */
-  .prose-body :global(h2) {
-    font-size: var(--text-h3);
-    margin-top: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .prose-body :global(p) {
-    max-width: 62ch;
-    margin-bottom: 1rem;
-    color: var(--color-ink-2);
-  }
-  .prose-body :global(strong) {
-    color: var(--color-ink);
-  }
-</style>

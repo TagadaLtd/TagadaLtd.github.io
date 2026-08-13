@@ -36,10 +36,10 @@ const title =
   <Method method={home.method} />
   <Pillars lang={lang} pillars={home.pillars} />
 
-  <Section label={home.selectedWork.label} title={home.selectedWork.title}>
+  <Section label={home.selectedWork.label} title={home.selectedWork.title} icon="panels">
     {
       work.length > 0 ? (
-        <div class="grid gap-6 md:grid-cols-3">
+        <div class="grid gap-6 md:grid-cols-3" data-reveal-group>
           {work.map((entry) => (
             <WorkCard lang={lang} entry={entry} />
           ))}
@@ -52,21 +52,19 @@ const title =
         </p>
       )
     }
-    <a
-      href={localPath(lang, 'work')}
-      class="mt-10 inline-block text-sm text-[color:var(--color-accent)] hover:opacity-80"
-    >
-      {home.selectedWork.cta} →
+    <a href={localPath(lang, 'work')} class="link-arrow mt-12">
+      {home.selectedWork.cta}
+      <span class="link-arrow-glyph" aria-hidden="true">→</span>
     </a>
   </Section>
 
   <Proof proof={home.proof} />
   <Process process={home.process} />
 
-  <Section label={home.writing.label} title={home.writing.title}>
+  <Section label={home.writing.label} title={home.writing.title} icon="lines">
     {
       posts.length > 0 ? (
-        <div class="grid gap-8 md:grid-cols-3">
+        <div class="grid gap-8 md:grid-cols-3" data-reveal-group>
           {posts.map((entry) => (
             <PostCard lang={lang} entry={entry} />
           ))}
@@ -79,11 +77,9 @@ const title =
         </p>
       )
     }
-    <a
-      href={localPath(lang, 'blog')}
-      class="mt-10 inline-block text-sm text-[color:var(--color-accent)] hover:opacity-80"
-    >
-      {home.writing.cta} →
+    <a href={localPath(lang, 'blog')} class="link-arrow mt-12">
+      {home.writing.cta}
+      <span class="link-arrow-glyph" aria-hidden="true">→</span>
     </a>
   </Section>
 

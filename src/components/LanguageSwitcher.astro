@@ -30,7 +30,7 @@ const options = (LANGS as readonly Lang[]).map((code) => ({
     options.map(({ code, href, label, full }) =>
       code === lang ? (
         <span
-          class="rounded-sm bg-surface-2 px-2 py-1 font-mono text-xs text-ink"
+          class="rounded-sm bg-surface-2 px-2 py-1 font-mono text-meta font-medium text-ink"
           aria-current="true"
         >
           <span class="sr-only">{full} — </span>
@@ -41,7 +41,7 @@ const options = (LANGS as readonly Lang[]).map((code) => ({
           href={href}
           hreflang={code}
           lang={code}
-          class="rounded-sm px-2 py-1 font-mono text-xs text-ink-3 transition-colors hover:text-ink"
+          class="rounded-sm px-2 py-1 font-mono text-meta font-medium text-ink-3 transition-colors hover:text-ink"
         >
           <span class="sr-only">{full}</span>
           <span aria-hidden="true">{label}</span>

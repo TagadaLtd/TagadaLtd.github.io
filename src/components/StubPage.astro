@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Section from '../components/Section.astro';
+import PageHeader from './PageHeader.astro';
 import type { Lang } from '../i18n/ui';
 
 interface Props {
@@ -18,9 +18,9 @@ const { lang, title, note } = Astro.props;
 ---
 
 <BaseLayout lang={lang} title={`${title} — Sébastien Borges Lopes`} description={note} noindex>
-  <Section label={title} rule={false}>
-    <h1 class="text-h1">{title}</h1>
-    <p class="mt-8 measure text-ink-2">{note}</p>
-    <p class="label mt-12">Not built yet</p>
-  </Section>
+  <PageHeader lang={lang} title={title} intro={note} />
+
+  <section class="shell pb-24">
+    <p class="label border-t border-line pt-8">Not built yet</p>
+  </section>
 </BaseLayout>

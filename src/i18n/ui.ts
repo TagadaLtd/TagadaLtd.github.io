@@ -27,6 +27,14 @@ export const ui = {
     'lang.en': 'English',
     'lang.fr': 'Français',
 
+    'theme.toggle': 'Switch between light and dark',
+
+    // Chart chrome for the hero figure. Legend wording is the real vocabulary
+    // — observed points, fitted line — not a decorative caption.
+    'hero.figure': 'Fig. 01 — the noise, and the line through it',
+    'hero.legend.observed': 'Observed',
+    'hero.legend.fitted': 'Fitted',
+
     'footer.newsletter.title': 'Marketing and data, roughly monthly',
     'footer.newsletter.body':
       'Occasional notes on customer data, measurement, and the tools in between. No more than one email a month.',
@@ -60,6 +68,12 @@ export const ui = {
     'lang.switch': 'Changer de langue',
     'lang.en': 'English',
     'lang.fr': 'Français',
+
+    'theme.toggle': 'Basculer entre thème clair et sombre',
+
+    'hero.figure': 'Fig. 01 — le bruit, et la ligne qui le traverse',
+    'hero.legend.observed': 'Observé',
+    'hero.legend.fitted': 'Ajusté',
 
     'footer.newsletter.title': 'Marketing et données, environ une fois par mois',
     'footer.newsletter.body':

@@ -2,6 +2,7 @@
 import { useTranslations, type Lang } from '../i18n/ui';
 import { localPath, isActiveSection } from '../i18n/paths';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   lang: Lang;
@@ -24,16 +25,18 @@ const nav = [
 const contactHref = localPath(lang, 'contact');
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-plane/85 backdrop-blur-md">
-  <div class="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3 sm:px-8">
+<header class="sticky top-0 z-40 border-b border-line bg-plane/80 backdrop-blur-xl">
+  <div class="shell flex items-center gap-6 py-3.5">
+    <!-- The wordmark is set in mono at the same size as the section labels:
+         the name is chrome, not a logo. -->
     <a
       href={localPath(lang)}
-      class="font-mono text-sm tracking-tight text-ink transition-colors hover:text-accent"
+      class="font-mono text-[0.8125rem] font-medium tracking-tight text-ink transition-colors hover:text-accent"
     >
       Sébastien<span class="text-ink-3"> Borges Lopes</span>
     </a>
 
-    <nav aria-label="Primary" class="ml-auto hidden items-center gap-1 md:flex">
+    <nav aria-label="Primary" class="ml-auto hidden items-center gap-0.5 lg:flex">
       {
         nav.map(({ key, href }) => {
           const active = isActiveSection(pathname, href);
@@ -42,39 +45,48 @@ const contactHref = localPath(lang, 'contact');
               href={href}
               aria-current={active ? 'page' : undefined}
               class:list={[
-                'rounded-md px-3 py-2 text-sm transition-colors',
+                'relative rounded-md px-3 py-2 text-sm transition-colors',
                 active ? 'text-ink' : 'text-ink-2 hover:text-ink',
               ]}
             >
               {t(key)}
-              {active && <span class="mx-auto mt-1 block h-px w-4 bg-accent" aria-hidden="true" />}
+              {active && (
+                <span
+                  class="absolute inset-x-3 -bottom-3.5 h-px bg-accent"
+                  aria-hidden="true"
+                />
+              )}
             </a>
           );
         })
       }
     </nav>
 
-    <div class="ml-auto flex items-center gap-2 md:ml-0">
+    <div class="ml-auto flex items-center gap-2 lg:ml-4">
+      <ThemeToggle lang={lang} />
       <LanguageSwitcher lang={lang} />
 
+      <!-- Outlined, not filled. The solid marigold is reserved for the one
+           primary action inside the page — a persistent filled button in the
+           header would spend that signal on every scroll. -->
       <a
         href={contactHref}
-        class="hidden rounded-md bg-accent px-4 py-2 text-sm font-medium text-plane transition-opacity hover:opacity-90 sm:inline-block"
+        class="btn btn-sm hidden border-line-strong text-accent-warm hover:border-accent-warm sm:inline-flex"
       >
         {t('nav.cta')}
       </a>
 
       <!-- <details> rather than a script: the mobile menu opens with JavaScript
            disabled, which matters because / already depends on JS for detection. -->
-      <details class="relative md:hidden">
+      <details class="relative lg:hidden">
         <summary
-          class="flex cursor-pointer list-none items-center rounded-md border border-line px-3 py-2 font-mono text-xs uppercase tracking-widest text-ink-2"
+          class="flex cursor-pointer list-none items-center rounded-md border border-line px-3 py-2 font-mono text-meta font-medium uppercase tracking-[0.11em] text-ink-2 transition-colors hover:border-line-strong"
         >
           {t('nav.menu')}
         </summary>
         <nav
           aria-label="Primary"
-          class="absolute right-0 top-full mt-2 w-56 rounded-lg border border-line bg-surface p-2 shadow-2xl"
+          class="absolute right-0 top-full mt-2 w-60 rounded-lg border border-line bg-surface p-2 shadow-2xl shadow-black/50"
         >
           {
             nav.map(({ key, href }) => (
@@ -82,10 +94,10 @@ const contactHref = localPath(lang, 'contact');
                 href={href}
                 aria-current={isActiveSection(pathname, href) ? 'page' : undefined}
                 class:list={[
-                  'block rounded-md px-3 py-2 text-sm',
+                  'block rounded-md px-3 py-2 text-sm transition-colors',
                   isActiveSection(pathname, href)
                     ? 'bg-surface-2 text-ink'
-                    : 'text-ink-2 hover:text-ink',
+                    : 'text-ink-2 hover:bg-surface-2 hover:text-ink',
                 ]}
               >
                 {t(key)}
@@ -94,7 +106,7 @@ const contactHref = localPath(lang, 'contact');
           }
           <a
             href={contactHref}
-            class="mt-1 block rounded-md bg-accent px-3 py-2 text-center text-sm font-medium text-plane sm:hidden"
+            class="btn btn-primary mt-1 w-full justify-center sm:hidden"
           >
             {t('nav.cta')}
           </a>

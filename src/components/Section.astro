@@ -1,23 +1,44 @@
 ---
+import Glyph from './Glyph.astro';
+import type { GlyphName } from './glyphs';
+
 interface Props {
   /** Mono eyebrow. The "technical chrome" half of the design split. */
   label?: string;
   title?: string;
+  /** Chart mark shown beside the label. See Glyph.astro for what each says. */
+  icon?: GlyphName;
   id?: string;
   /** Draws the hairline above the section. Off for the first section on a page. */
   rule?: boolean;
   class?: string;
 }
 
-const { label, title, id, rule = true, class: className = '' } = Astro.props;
+const { label, title, icon, id, rule = true, class: className = '' } = Astro.props;
+
+// The header is a two-column row on wide screens: the mono label sits in a
+// narrow left rail, the title in the reading column. It puts every section
+// label on the same vertical line down the page, which is what makes the
+// technical chrome read as an instrument scale rather than as scattered tags.
 ---
 
-<section id={id} class:list={['mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28', className]}>
+<section id={id} class:list={['shell section-y', className]}>
   {
     (label || title) && (
-      <header class:list={['pb-10', rule && 'rule-t pt-10']}>
-        {label && <p class="label">{label}</p>}
-        {title && <h2 class="mt-4 max-w-3xl text-h2">{title}</h2>}
+      <header class:list={['pb-12', rule && 'rule-t pt-10']}>
+        <div class="grid gap-x-10 gap-y-4 md:grid-cols-[10rem_minmax(0,1fr)]">
+          {label && (
+            <p class="label flex items-center gap-2.5 md:pt-2" data-reveal>
+              {icon && <Glyph name={icon} />}
+              {label}
+            </p>
+          )}
+          {title && (
+            <h2 class="max-w-[24ch] text-h2" data-reveal>
+              {title}
+            </h2>
+          )}
+        </div>
       </header>
     )
   }

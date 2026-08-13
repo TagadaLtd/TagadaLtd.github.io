@@ -1,25 +1,136 @@
 @import 'tailwindcss';
 
 /* =============================================================================
-   Design tokens
+   Palette
    -----------------------------------------------------------------------------
-   Settled (design-system.md): the two surfaces and the chart palette. Those
-   hexes came out of an enumerated search scored on colour-blind separation —
-   editing one by eye invalidates the whole set. Load the `dataviz` skill and
-   re-run scripts/validate_palette.js before changing any of them.
+   Two themes. Light is the default declaration on bare :root, dark is applied
+   twice — once for `prefers-color-scheme: dark` when the visitor has made no
+   explicit choice, once for `[data-theme="dark"]` so the toggle wins in both
+   directions. Never give a colour its only definition inside a media query.
 
-   PROVISIONAL: everything marked below. Interface ink, spacing, radius and type
-   are not yet designed. They are deliberately plain so the structure can be
-   judged before the visual system is decided.
+   The site was designed dark-first (design-system.md) and dark is still the
+   house view; light exists because a visitor asked for it, and it is built to
+   the same contrast floors rather than as a tinted copy.
+
+   The relationship each theme keeps: a cool ground, and text one notch warmer
+   than the ground. That tension is the chrome/content split in colour — the
+   surface stays technical, the words on it stay human.
    ========================================================================== */
 
-@theme {
-  /* --- Surfaces — settled ------------------------------------------------ */
-  --color-plane: #0a0c10; /* page plane */
-  --color-surface: #12151c; /* chart surface, reused for cards and wells */
-  --color-surface-2: #171b24; /* PROVISIONAL: one step up, for hover/raised */
+:root {
+  color-scheme: light;
 
-  /* --- Chart palette — settled, fixed order, assign in sequence ---------- */
+  --plane: #f4f5f7; /* page plane */
+  --surface: #ffffff; /* cards and wells — raised, so lighter */
+  --surface-2: #eceef2; /* hover and pressed */
+
+  /* Contrast on the plane: 16.0:1, 7.9:1, 4.8:1. The last clears 4.5:1, which
+     is what 12px mono labels need. */
+  --ink: #14181f;
+  --ink-2: #4e5561;
+  --ink-3: #666d79;
+
+  --line: #14181f1f;
+  --line-strong: #14181f33;
+  --grid: #14181f0f;
+
+  /* Cyan is the data half of the positioning line and marks anything
+     technical or navigational. Marigold is the marketing half, reserved for
+     the one commercial action on a page. Both are re-cut per theme so link
+     text and button fills hold their contrast floors. */
+  --accent: #0e7490; /* 4.9:1 as link text */
+  --accent-hi: #0b5a72;
+  --accent-warm: #c2740a; /* 3.3:1 as a fill boundary against the plane */
+  --accent-warm-hi: #d4820f;
+  --on-warm: #0f1216; /* 4.9:1 on the fill */
+}
+
+/* No explicit choice: follow the operating system. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --plane: #0a0c10;
+    --surface: #12151c;
+    --surface-2: #191d26;
+
+    --ink: #eceae4;
+    --ink-2: #a9a7a0;
+    --ink-3: #7e7d75;
+
+    --line: #eceae41f;
+    --line-strong: #eceae43d;
+    --grid: #eceae40d;
+
+    --accent: #4fd8e8; /* 11.5:1 as link text */
+    --accent-hi: #8aeaf4;
+    --accent-warm: #f0a33a; /* 9.3:1 */
+    --accent-warm-hi: #ffb85c;
+    --on-warm: #0f1216;
+  }
+}
+
+/* An explicit choice, either way. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --plane: #0a0c10;
+  --surface: #12151c;
+  --surface-2: #191d26;
+
+  --ink: #eceae4;
+  --ink-2: #a9a7a0;
+  --ink-3: #7e7d75;
+
+  --line: #eceae41f;
+  --line-strong: #eceae43d;
+  --grid: #eceae40d;
+
+  --accent: #4fd8e8;
+  --accent-hi: #8aeaf4;
+  --accent-warm: #f0a33a;
+  --accent-warm-hi: #ffb85c;
+  --on-warm: #0f1216;
+}
+
+/* =============================================================================
+   Design tokens
+   -----------------------------------------------------------------------------
+   `@theme inline` so every generated utility resolves to the live variable
+   rather than baking in a hex — that is what lets the toggle repaint the page
+   without a second stylesheet.
+   ========================================================================== */
+
+@theme inline {
+  --color-plane: var(--plane);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-grid: var(--grid);
+
+  --color-accent: var(--accent);
+  --color-accent-hi: var(--accent-hi);
+  --color-accent-warm: var(--accent-warm);
+  --color-accent-warm-hi: var(--accent-warm-hi);
+  --color-on-warm: var(--on-warm);
+}
+
+@theme {
+  /* --- Chart palette — settled, fixed order, assign in sequence ----------
+     These hexes came out of an enumerated search scored on colour-blind
+     separation against the DARK chart surface (#12151C) — editing one by eye
+     invalidates the whole set. Load the `dataviz` skill and re-run
+     scripts/validate_palette.js before changing any of them.
+
+     TODO(palette): the light theme now puts these on #FFFFFF, which the
+     validation run never covered. Re-run with --mode light --surface "#ffffff"
+     before any real chart ships, and expect a second, lighter-surface ordering
+     rather than assuming this one carries over. */
   --color-series-1: #0891b2; /* cyan   — data */
   --color-series-2: #d97706; /* amber  — marketing */
   --color-series-3: #be185d; /* rose */
@@ -36,40 +147,45 @@
   --color-seq-4: #06b6d4;
   --color-seq-5: #0891b2;
 
-  /* --- Interface ink — PROVISIONAL --------------------------------------- */
-  --color-ink: #e8eaed; /* body and headings */
-  --color-ink-2: #a8aeb8; /* secondary prose */
-  --color-ink-3: #737b87; /* meta, mono labels */
-  --color-line: #ffffff1a; /* hairlines, card edges */
-  --color-line-strong: #ffffff2e; /* grid rules that should read */
+  /* --- Type --------------------------------------------------------------
+     The neutral system stack. Roboto was tried in the 2026-08-13 pass and
+     rejected on sight — Sébastien preferred this. The personality here comes
+     from the scale, the tracking and the mono/sans split, not from the family.
 
-  /* Interactive accents. Deliberately NOT the series hexes: a series colour
-     carries data identity, an accent carries interaction. Keeping them apart
-     is what stops a link from looking like a chart legend. */
-  --color-accent: #22d3ee;
-  --color-accent-warm: #f59e0b;
-
-  /* --- Type — PROVISIONAL ------------------------------------------------
-     Neutral system stack pending the typography pass. Swapping in the real
-     faces is these two lines plus @font-face rules; nothing else references
-     a family name. */
+     Still an open decision (design-system.md). Swapping in a real face is
+     these two lines plus @font-face; nothing else names a family. */
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-  /* Fluid scale. Steps are ~1.25 at the small end, widening toward display. */
+  /* Fluid scale. Deliberately gappy at the top — display and body are two
+     different registers, not neighbouring steps on one ramp. */
   --text-meta: 0.75rem;
-  --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
-  --text-lead: clamp(1.125rem, 1.05rem + 0.38vw, 1.375rem);
-  --text-h3: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
-  --text-h2: clamp(1.75rem, 1.45rem + 1.5vw, 2.75rem);
-  --text-h1: clamp(2.5rem, 1.8rem + 3.4vw, 5rem);
+  --text-body: clamp(1rem, 0.965rem + 0.18vw, 1.0625rem);
+  --text-lead: clamp(1.125rem, 1.03rem + 0.48vw, 1.4375rem);
+  --text-h3: clamp(1.1875rem, 1.12rem + 0.34vw, 1.375rem);
+  --text-h2: clamp(1.875rem, 1.5rem + 1.7vw, 3rem);
+  --text-h1: clamp(2.625rem, 1.7rem + 4vw, 5.25rem);
+  /* Article mastheads. A case-study or post title is read, not announced, and
+     it sits in a narrower column than a page heading does. */
+  --text-title: clamp(2.125rem, 1.55rem + 2.4vw, 3.5rem);
+  --text-stat: clamp(2rem, 1.5rem + 2.2vw, 3.25rem); /* headline figures */
 
-  /* --- Shape — PROVISIONAL ---------------------------------------------- */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
+  /* --- Shape and rhythm --------------------------------------------------
+     One container, one gutter, one section step. Everything horizontal aligns
+     because it all comes through .shell; everything vertical is a multiple of
+     the section step or a Tailwind spacing unit, never an eyeballed value. */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --container: 72rem;
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem);
+  --space-section: clamp(4.5rem, 3rem + 6vw, 8.5rem);
+
+  /* One easing for the whole site. Everything decelerates the same way. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* =============================================================================
@@ -79,7 +195,6 @@
 @layer base {
   html {
     background-color: var(--color-plane);
-    color-scheme: dark;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -93,23 +208,36 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.6;
+    line-height: 1.62;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
+  /* The display voice, with no display face to lean on: medium weight rather
+     than semibold, and tracking pulled in hard as the size grows. Deliberately
+     no font-stretch — the system stack has no width axis, and asking for one
+     on Android would quietly select Roboto Condensed instead. */
   h1,
   h2,
   h3,
   h4 {
-    line-height: 1.1;
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
     text-wrap: balance;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    line-height: 0.98;
+    letter-spacing: -0.035em;
   }
 
   p {
     text-wrap: pretty;
+  }
+
+  :where(code, kbd, samp) {
+    font-family: var(--font-mono);
   }
 
   :focus-visible {
@@ -123,8 +251,8 @@
     color: var(--color-plane);
   }
 
-  /* No meaning may live only in animation (design-system.md). Every scroll
-     sequence has a static equivalent; this switch is the global backstop. */
+  /* No meaning may live only in animation (design-system.md). Every reveal
+     below has a static equivalent; this switch is the global backstop. */
   @media (prefers-reduced-motion: reduce) {
     html:focus-within {
       scroll-behavior: auto;
@@ -141,18 +269,221 @@
 }
 
 /* =============================================================================
+   Components
+   -----------------------------------------------------------------------------
+   In @layer components so a Tailwind utility in the markup always wins over
+   them. Anything used on three or more pages lives here rather than as a
+   repeated class string — that is what keeps the gutters and the button
+   geometry identical everywhere.
+   ========================================================================== */
+
+@layer components {
+  /* The single horizontal frame. Every full-width row goes through this. */
+  .shell {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section-y {
+    padding-block: var(--space-section);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0.8125rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 0.2s var(--ease-out),
+      border-color 0.2s var(--ease-out),
+      color 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out),
+      box-shadow 0.2s var(--ease-out);
+  }
+  /* A 1px lift and a shadow the colour of the button itself. Small enough to
+     read as responsiveness rather than as an effect. */
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  .btn:active {
+    transform: translateY(0);
+    transition-duration: 0.06s;
+  }
+
+  /* Marigold, and the only warm thing in the chrome — one commercial action
+     per view. Using it twice on a screen spends the whole effect. */
+  .btn-primary {
+    background: var(--color-accent-warm);
+    color: var(--color-on-warm);
+  }
+  .btn-primary:hover {
+    background: var(--color-accent-warm-hi);
+    box-shadow: 0 6px 20px -8px var(--color-accent-warm);
+  }
+
+  .btn-ghost {
+    border-color: var(--color-line-strong);
+    color: var(--color-ink);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-ink-3);
+    background: var(--color-surface);
+  }
+
+  .btn-sm {
+    padding: 0.5625rem 0.9375rem;
+  }
+
+  .card {
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    transition:
+      border-color 0.25s var(--ease-out),
+      background-color 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out);
+  }
+  .card:hover {
+    border-color: var(--color-line-strong);
+    transform: translateY(-2px);
+  }
+
+  /* Long-form body copy, shared by case studies and posts. The measure is set
+     on the paragraphs rather than the wrapper so headings, rules and figures
+     can still run full width. */
+  .prose-body {
+    color: var(--color-ink-2);
+  }
+  .prose-body > * + * {
+    margin-top: 1.15em;
+  }
+  .prose-body p,
+  .prose-body ul,
+  .prose-body ol,
+  .prose-body blockquote {
+    max-width: 62ch;
+  }
+  .prose-body h2 {
+    margin-top: 2.75em;
+    margin-bottom: 0.6em;
+    font-size: var(--text-h3);
+    color: var(--color-ink);
+  }
+  .prose-body h3 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+  .prose-body strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .prose-body a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  .prose-body a:hover {
+    text-decoration-color: currentColor;
+  }
+  .prose-body ul,
+  .prose-body ol {
+    padding-left: 1.25rem;
+  }
+  .prose-body li::marker {
+    color: var(--color-ink-3);
+  }
+  .prose-body code {
+    font-size: 0.875em;
+    color: var(--color-ink);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    padding: 0.1em 0.35em;
+  }
+  .prose-body blockquote {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1.25rem;
+    color: var(--color-ink);
+  }
+
+  /* Tertiary navigation. The arrow is a separate span so it can move without
+     dragging the label's letter-spacing with it. */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    transition: color 0.2s var(--ease-out);
+  }
+  .link-arrow:hover {
+    color: var(--color-accent-hi);
+  }
+  .link-arrow > .link-arrow-glyph {
+    transition: transform 0.2s var(--ease-out);
+  }
+  .link-arrow:hover > .link-arrow-glyph {
+    transform: translateX(3px);
+  }
+}
+
+/* =============================================================================
+   Scroll reveal
+   -----------------------------------------------------------------------------
+   Opt-in twice over, so content can never be stranded invisible:
+
+   1. The hiding rules only apply under .js-motion, which the inline script in
+      BaseLayout adds only when IntersectionObserver exists. No JS, no hiding.
+   2. They sit inside prefers-reduced-motion: no-preference, so a visitor who
+      asked for less motion gets the finished page with no transition at all.
+
+   Elements reveal once and stay revealed — nothing re-animates on scroll back,
+   which is the difference between a page that feels alive and one that feels
+   twitchy.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js-motion [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.7s var(--ease-out),
+      transform 0.7s var(--ease-out);
+    transition-delay: calc(var(--reveal-i, 0) * 80ms);
+  }
+
+  .js-motion [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =============================================================================
    Chrome utilities
    -----------------------------------------------------------------------------
    design-system.md mandates a split: technical chrome, warm content. These are
-   the chrome side — mono labels and visible grid rules. Prose keeps the sans
-   stack and generous measure.
+   the chrome side — mono labels, grid rules, plot paper. Prose keeps the sans
+   stack and a generous measure.
    ========================================================================== */
 
 @utility label {
   font-family: var(--font-mono);
   font-size: var(--text-meta);
-  letter-spacing: 0.12em;
+  font-weight: 500;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
+  line-height: 1.4;
   color: var(--color-ink-3);
 }
 
@@ -163,4 +494,23 @@
 /* The measure for running prose. Anything longer stops being readable. */
 @utility measure {
   max-width: 62ch;
+}
+
+/* Figures, in the numeric sense: mono, lining, and column-aligned so a stat
+   row does not jitter when the numbers change. */
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Plot paper. Decorative only — it should register as texture, not as a grid
+   you could read a value off. */
+@utility plot-paper {
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
 }

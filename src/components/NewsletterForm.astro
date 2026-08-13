@@ -36,19 +36,15 @@ const configured = KIT_FORM_ACTION !== '';
     disabled={!configured}
     autocomplete="email"
     placeholder={t('footer.newsletter.email')}
-    class="min-w-0 flex-1 rounded-md border border-line bg-plane px-3 py-2 text-sm text-ink placeholder:text-ink-3 disabled:opacity-50"
+    class="min-w-0 flex-1 rounded-md border border-line bg-plane px-3.5 py-2.5 text-sm text-ink transition-colors placeholder:text-ink-3 hover:border-line-strong focus:border-accent disabled:opacity-50 disabled:hover:border-line"
   />
-  <button
-    type="submit"
-    disabled={!configured}
-    class="rounded-md border border-line bg-surface-2 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-line-strong disabled:opacity-50"
-  >
+  <button type="submit" disabled={!configured} class="btn btn-ghost justify-center disabled:opacity-50">
     {t('footer.newsletter.submit')}
   </button>
 </form>
 {
   !configured && (
-    <p class="mt-2 font-mono text-xs text-ink-3">
+    <p class="mt-2.5 font-mono text-meta text-ink-3">
       Newsletter not connected yet — needs a Kit account.
     </p>
   )

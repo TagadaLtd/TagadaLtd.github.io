@@ -25,12 +25,15 @@ const date = entry.data.date.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB
 // (site-plan.md §11.4), so a badge would carry no information.
 ---
 
-<article class="group relative rule-t pt-6">
+<article
+  class="group relative border-t border-line pt-6 transition-colors hover:border-line-strong"
+  data-reveal
+>
   {entry.data.draft && <PlaceholderBadge lang={lang} />}
 
   <p class="label">{date} · {minutes} {t('blog.readingTime')}</p>
-  <h3 class="mt-3 text-h3">
+  <h3 class="mt-4 text-h3 transition-colors group-hover:text-accent">
     <a href={href} class="after:absolute after:inset-0">{entry.data.title}</a>
   </h3>
-  <p class="mt-3 measure text-sm text-ink-2">{entry.data.description}</p>
+  <p class="measure mt-3 text-sm text-ink-2">{entry.data.description}</p>
 </article>

@@ -1,6 +1,7 @@
 ---
 import type { Lang } from '../../i18n/ui';
 import { localPath } from '../../i18n/paths';
+import { useTranslations } from '../../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -13,68 +14,173 @@ interface Props {
 }
 
 const { lang, hero } = Astro.props;
+const t = useTranslations(lang);
 
-// The scatter is the first beat of the Data -> Insight -> Action sequence:
-// scattered, unresolved points. Rendered statically here. The motion pass will
-// animate these same nodes rather than replacing them, so the reduced-motion
-// view and the animated view show the same thing at rest.
+// -----------------------------------------------------------------------------
+// The signature: the positioning line, plotted.
+//
+// A cloud of observations with a fitted line running through it — the cloud is
+// the client's data, the line is the part their team can act on. It is the one
+// picture that says "I sit between your marketing team and your data" without a
+// word, and it is a real chart form rather than ambient particles.
+//
+// It is also the first beat of the Data -> Insight -> Action sequence. The
+// motion pass animates these same nodes rather than replacing them, so the
+// reduced-motion view and the animated view show the same thing at rest.
+//
+// Built in HTML+CSS, not SVG shapes: the band is a different aspect ratio at
+// every viewport width, and an SVG stretched to fit turns its circles into
+// ellipses. A point that is not round stops reading as a data point. Only the
+// straight rules and the fitted line go in SVG (preserveAspectRatio="none" —
+// a distorted straight line is still a straight line) with non-scaling strokes.
 //
 // Deterministic rather than Math.random(), so the built HTML is stable across
 // builds and diffs stay readable.
-// Positioned as absolute elements rather than SVG circles: an SVG stretched to
-// an arbitrary hero box turns its circles into ellipses, and a point that is
-// not round stops reading as a data point.
-const POINTS = 46;
-const points = Array.from({ length: POINTS }, (_, i) => {
-  const a = Math.sin(i * 12.9898) * 43758.5453;
-  const b = Math.sin(i * 78.233) * 24634.6345;
+// -----------------------------------------------------------------------------
+const rnd = (i: number, salt: number) => {
+  const v = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+  return v - Math.floor(v);
+};
+
+// Percent coordinates, y measured from the top. The fit descends left to right,
+// so on screen the relationship reads as rising.
+const FIT_Y0 = 84;
+const FIT_Y1 = 16;
+const fitAt = (x: number) => FIT_Y0 + (x / 100) * (FIT_Y1 - FIT_Y0);
+
+const N = 56;
+const points = Array.from({ length: N }, (_, i) => {
+  const t = (i + 0.5) / N;
+  const x = 2 + t * 96 + (rnd(i, 1) - 0.5) * 3;
+  // Three uniforms summed, so the scatter around the line falls off at the
+  // edges the way real residuals do instead of filling a flat band.
+  const noise = (rnd(i, 2) + rnd(i, 3) + rnd(i, 4) - 1.5) * 30;
+  const fy = fitAt(x);
+  const y = Math.min(94, Math.max(8, fy + noise));
   return {
-    left: ((a - Math.floor(a)) * 100).toFixed(2),
-    top: ((b - Math.floor(b)) * 100).toFixed(2),
-    size: 3 + ((i * 7) % 5),
-    opacity: (0.2 + ((i * 3) % 7) * 0.07).toFixed(2),
+    x: x.toFixed(2),
+    y: y.toFixed(2),
+    // The residual: how far this observation sits from the line.
+    top: Math.min(y, fy).toFixed(2),
+    height: Math.abs(y - fy).toFixed(2),
+    size: (3 + rnd(i, 5) * 2.4).toFixed(1),
+    // Floor kept high enough for the light theme, where the accent is a dark
+    // teal and a 40%-opacity point simply disappears into the paper.
+    opacity: (0.55 + rnd(i, 6) * 0.4).toFixed(2),
   };
 });
 ---
 
 <section class="relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-    {
-      points.map((p) => (
-        <span
-          class="absolute rounded-full bg-accent"
-          style={`left:${p.left}%;top:${p.top}%;width:${p.size}px;height:${p.size}px;opacity:${p.opacity}`}
-        />
-      ))
-    }
-  </div>
+  <div class="shell relative pt-20 sm:pt-28 lg:pt-32" data-reveal-group>
+    <p class="label" data-reveal>{hero.eyebrow}</p>
 
-  <div
-    class="absolute inset-0 bg-gradient-to-b from-transparent via-plane/60 to-plane"
-    aria-hidden="true"
-  >
-  </div>
-
-  <div class="relative mx-auto max-w-6xl px-5 pb-24 pt-24 sm:px-8 sm:pb-32 sm:pt-36">
-    <p class="label">{hero.eyebrow}</p>
-
-    <h1 class="mt-6 max-w-4xl text-h1 font-semibold">
+    <h1 class="mt-7 max-w-[19ch] text-h1" data-reveal>
       {hero.positioning}
     </h1>
 
-    <div class="mt-10 flex flex-wrap items-center gap-3">
-      <a
-        href={localPath(lang, 'work')}
-        class="rounded-md bg-accent px-5 py-3 text-sm font-medium text-plane transition-opacity hover:opacity-90"
-      >
+    <div class="mt-10 flex flex-wrap items-center gap-3 sm:mt-12" data-reveal>
+      <a href={localPath(lang, 'work')} class="btn btn-primary">
         {hero.ctaPrimary}
       </a>
-      <a
-        href={localPath(lang, 'contact')}
-        class="rounded-md border border-line px-5 py-3 text-sm text-ink transition-colors hover:border-line-strong"
-      >
+      <a href={localPath(lang, 'contact')} class="btn btn-ghost">
         {hero.ctaSecondary}
       </a>
     </div>
   </div>
+
+  <!-- The plot band. Its baseline is also the rule that closes the hero, so
+       the chart's axis and the page's section divider are the same line. -->
+  <figure class="shell mt-16 sm:mt-20" data-reveal>
+    <div class="plot-band relative h-40 w-full sm:h-52 lg:h-60" aria-hidden="true">
+      <div class="plot-paper absolute inset-0 opacity-90"></div>
+
+      {
+        points.map((p) => (
+          <span
+            class="absolute w-px bg-accent/35"
+            style={`left:${p.x}%;top:${p.top}%;height:${p.height}%`}
+          />
+        ))
+      }
+
+      <!-- The wrapper is what animates. A stroke-dash draw would be the usual
+           trick, but dash lengths are measured in rendered units once
+           vector-effect is non-scaling, so pathLength normalisation stops
+           applying and the line comes out dashed. Wiping a clip across it is
+           immune to both the stretch and the stroke mode. -->
+      <div class="fit-wrap absolute inset-0">
+        <svg
+          class="h-full w-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          focusable="false"
+        >
+          <line
+            x1="0"
+            y1={FIT_Y0}
+            x2="100"
+            y2={FIT_Y1}
+            stroke="var(--color-accent-warm)"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            vector-effect="non-scaling-stroke"></line>
+        </svg>
+      </div>
+
+      {
+        points.map((p) => (
+          <span
+            class="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
+            style={`left:${p.x}%;top:${p.y}%;width:${p.size}px;height:${p.size}px;opacity:${p.opacity}`}
+          />
+        ))
+      }
+    </div>
+
+    <figcaption
+      class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-line pt-4"
+    >
+      <span class="label">{t('hero.figure')}</span>
+      <span class="label flex items-center gap-5">
+        <span class="flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+          {t('hero.legend.observed')}
+        </span>
+        <span class="flex items-center gap-2">
+          <span class="h-px w-4 bg-accent-warm" aria-hidden="true"></span>
+          {t('hero.legend.fitted')}
+        </span>
+      </span>
+    </figcaption>
+  </figure>
 </section>
+
+<style>
+  /* The paper and the scatter fade out at the top so the band emerges from the
+     hero rather than sitting in a box under it. */
+  .plot-band {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%);
+    mask-image: linear-gradient(to bottom, transparent, #000 22%);
+  }
+
+  /* The one orchestrated moment on the page: the line resolving out of the
+     noise, once the figure has arrived.
+
+     The clip lives only inside the keyframes, never on .fit-wrap itself, so
+     the resting state is the finished line. No JS, no animation support, or
+     reduced motion — every one of those paths shows the drawn line rather than
+     an empty band. */
+  :global([data-reveal].is-in) .fit-wrap {
+    animation: draw-fit 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes draw-fit {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+</style>

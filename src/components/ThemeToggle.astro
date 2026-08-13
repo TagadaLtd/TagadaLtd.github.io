@@ -1,0 +1,110 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Two states the visitor can reach, and a third they start in: no stored
+// choice means the operating system decides. Clicking always sets an explicit
+// preference, because someone who reaches for the toggle wants it to stick.
+//
+// GitHub Pages cannot read a cookie and render the right theme, so the applied
+// value has to be written by the inline script in BaseLayout before paint. All
+// this button does is flip the attribute and remember it.
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  class="theme-toggle rounded-md border border-line p-2 text-ink-3 transition-colors hover:border-line-strong hover:text-ink"
+  aria-label={t('theme.toggle')}
+  title={t('theme.toggle')}
+>
+  <!-- Sun shows in dark mode: the icon is the destination, not the state. -->
+  <svg
+    class="icon-sun size-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+    ></path>
+  </svg>
+
+  <svg
+    class="icon-moon size-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.7 6.7 0 0 0 10.5 10.5Z"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Stacked in one grid cell, cross-faded and counter-rotated. The rotation is
+     what makes the swap read as a single object turning over rather than two
+     icons blinking. */
+  .theme-toggle svg {
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.25s var(--ease-out),
+      transform 0.4s var(--ease-out);
+  }
+
+  /* The head script always resolves the theme to an explicit attribute before
+     paint, so these two rules cover every state the button can be in. */
+  :global(:root[data-theme='light']) .icon-sun,
+  :global(:root[data-theme='dark']) .icon-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+
+  :global(:root[data-theme='light']) .icon-moon,
+  :global(:root[data-theme='dark']) .icon-sun {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+
+<script>
+  // Delegated, so it works for the button in the header on every page without
+  // caring how many copies exist.
+  document.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement | null)?.closest('[data-theme-toggle]');
+    if (!button) return;
+
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* private mode — the toggle still works, it just won't be remembered */
+    }
+
+    // Keep the browser chrome in step with the page.
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', next === 'dark' ? '#0a0c10' : '#f4f5f7');
+    }
+  });
+</script>
