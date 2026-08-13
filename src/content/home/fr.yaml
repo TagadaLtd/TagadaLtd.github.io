@@ -1,0 +1,110 @@
+# Copie de la page d’accueil — français.
+# La phrase de positionnement est arrêtée (CLAUDE.md). Le reste est un premier
+# jet, à réécrire par Sébastien dans sa propre voix.
+
+hero:
+  eyebrow: "Marketing digital · Données · IA — Maurice"
+  positioning: "Je fais le pont entre votre équipe marketing et vos données — et je les fais parler."
+  ctaPrimary: "Voir mes réalisations"
+  ctaSecondary: "Travaillons ensemble"
+
+thesis:
+  label: "Le problème"
+  body: >-
+    La plupart des entreprises collectent bien plus de données clients qu’elles n’en
+    exploiteront jamais. Elles dorment dans un CRM auquel personne ne fait confiance, un
+    tableur laissé par quelqu’un qui est parti, un compte analytics avec trois ans
+    d’historique et aucun propriétaire. Le problème vient rarement des données. Il vient de
+    ce que les personnes qui pourraient s’en servir et celles qui les comprennent ne sont pas
+    les mêmes.
+
+method:
+  label: "Ma méthode"
+  title: "La donnée devient information, l’information devient décision."
+  beats:
+    - step: "01"
+      title: "Données"
+      body: >-
+        Éparpillées, dupliquées, à moitié taguées. On commence par établir ce que vous avez
+        vraiment — ce qui est fiable, ce qui est du bruit, et ce qui manque tout simplement.
+    - step: "02"
+      title: "Information"
+      body: >-
+        La structure apparaît. Segments, cohortes, la poignée de chiffres qui font bouger
+        l’activité. Pas un tableau de bord à quarante graphiques — les quatre qui changent
+        une décision.
+    - step: "03"
+      title: "Action"
+      body: >-
+        Une campagne qui vise les bonnes personnes, un reporting qui s’écrit tout seul, une
+        décision que l’on peut défendre. L’analyse n’a jamais été le but.
+
+pillars:
+  label: "Ce que je fais"
+  title: "Trois facettes du même métier."
+  items:
+    - title: "Marketing"
+      body: >-
+        Audits SEO, acquisition, campagnes payantes, marketing automation. Six ans en agence
+        puis en interne : les recommandations tiennent face à un vrai budget.
+    - title: "Données"
+      body: >-
+        SQL, Python, Power BI, Looker Studio. Segmentation client, plans de tracking, un
+        reporting qui cesse d’absorber une journée par semaine.
+    - title: "IA"
+      body: >-
+        Les fondamentaux du machine learning appliqués là où ils se rentabilisent — scoring,
+        classification, et l’automatisation de ce que personne n’aime faire deux fois.
+
+selectedWork:
+  label: "Réalisations choisies"
+  title: "Des problèmes, et ce qui a changé."
+  cta: "Toutes les études de cas"
+
+proof:
+  label: "Parcours"
+  stats:
+    - value: "2019"
+      label: "Dans le marketing digital depuis"
+    - value: "24 sem."
+      label: "Formation data & IA, Le Wagon"
+    # Un troisième chiffre a sa place ici — le résultat client le plus fort, dès
+    # qu'une étude de cas aura un chiffre réel. Volontairement absent, pas inventé.
+  certifications:
+    - "Google Analytics"
+    - "HubSpot"
+    - "SALESmanago"
+    - "Le Wagon"
+
+process:
+  label: "Comment nous travaillerions"
+  title: "Aucun mystère, quatre étapes."
+  steps:
+    - title: "Un premier échange"
+      body: >-
+        Trente minutes. Vous décrivez le problème, je vous dis honnêtement si je suis la
+        bonne personne pour le traiter.
+    - title: "Une proposition cadrée"
+      body: >-
+        Ce que je ferais, ce que vous obtenez, en combien de temps et à quel prix. Une page,
+        prix ferme, sans abonnement dont on ne peut pas sortir.
+    - title: "Le travail"
+      body: >-
+        Un point par semaine, pour que rien n’arrive par surprise. Vous voyez la chose se
+        construire, pas un compte rendu à son sujet.
+    - title: "La passation"
+      body: >-
+        Documentée, et démontrée à celles et ceux qui devront la faire tourner après moi. Un
+        travail que je suis seul à pouvoir maintenir est un travail mal fait.
+
+writing:
+  label: "Écrits"
+  title: "Notes sur le marketing et la donnée."
+  cta: "Tous les articles"
+
+close:
+  title: "Un problème coincé entre le marketing et la donnée ?"
+  body: >-
+    Dites-moi ce que vous cherchez à résoudre. Si je ne suis pas la bonne personne je vous le
+    dirai, et je peux généralement vous orienter vers quelqu’un qui l’est.
+  cta: "Demander un devis"

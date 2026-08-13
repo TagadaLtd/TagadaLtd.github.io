@@ -1,0 +1,66 @@
+---
+import { LANGS, useTranslations, type Lang } from '../i18n/ui';
+import { translatePath } from '../i18n/paths';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const pathname = Astro.url.pathname;
+
+// Always visible, so the browser-language guess made at / is never a trap
+// (site-plan.md §12). Each option is a real link to the same page in the other
+// language — not a homepage bounce.
+const options = (LANGS as readonly Lang[]).map((code) => ({
+  code,
+  href: translatePath(pathname, code),
+  label: code.toUpperCase(),
+  full: t(code === 'fr' ? 'lang.fr' : 'lang.en'),
+}));
+---
+
+<div
+  class="flex items-center rounded-md border border-line p-0.5"
+  role="group"
+  aria-label={t('lang.switch')}
+>
+  {
+    options.map(({ code, href, label, full }) =>
+      code === lang ? (
+        <span
+          class="rounded-sm bg-surface-2 px-2 py-1 font-mono text-xs text-ink"
+          aria-current="true"
+        >
+          <span class="sr-only">{full} — </span>
+          {label}
+        </span>
+      ) : (
+        <a
+          href={href}
+          hreflang={code}
+          lang={code}
+          class="rounded-sm px-2 py-1 font-mono text-xs text-ink-3 transition-colors hover:text-ink"
+        >
+          <span class="sr-only">{full}</span>
+          <span aria-hidden="true">{label}</span>
+        </a>
+      )
+    )
+  }
+</div>
+
+<script>
+  // Remember an explicit choice so the gate at / honours it next visit.
+  // Only fires on a real click — never on arrival, so deep links stay put.
+  document.querySelectorAll<HTMLAnchorElement>('[aria-label] a[hreflang]').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', link.hreflang);
+      } catch {
+        /* private mode — the switcher still works, it just won't be remembered */
+      }
+    });
+  });
+</script>

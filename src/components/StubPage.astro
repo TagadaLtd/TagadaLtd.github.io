@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  /** What this page will contain, and which doc section specifies it. */
+  note: string;
+}
+
+const { lang, title, note } = Astro.props;
+
+// Routed, navigable, and honest about being empty. These exist so the
+// navigation is real while the pages are written — every nav item resolves,
+// nothing 404s, and the shape of the site can be judged before the copy lands.
+---
+
+<BaseLayout lang={lang} title={`${title} — Sébastien Borges Lopes`} description={note} noindex>
+  <Section label={title} rule={false}>
+    <h1 class="text-h1">{title}</h1>
+    <p class="mt-8 measure text-ink-2">{note}</p>
+    <p class="label mt-12">Not built yet</p>
+  </Section>
+</BaseLayout>

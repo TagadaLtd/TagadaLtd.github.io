@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import { LANGS, DEFAULT_LANG } from '../i18n/config.mjs';
+
+// The language gate. This is the ONLY page that redirects.
+//
+// GitHub Pages serves files; it cannot read Accept-Language and route on it.
+// So detection happens in the browser here, and here only. Deep links never
+// redirect — someone arriving at /fr/blog/a-post/ from search stays there.
+// That rule is what keeps shared URLs working and crawlers unconfused.
+//
+// The no-JS view below is a real page with two real links, not a blank shim.
+const site = Astro.site ?? new URL('https://example.com');
+---
+
+<!doctype html>
+<html lang={DEFAULT_LANG}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sébastien Borges Lopes — Digital marketing, data, AI</title>
+    <meta
+      name="description"
+      content="Freelance digital marketing and data analytics, based in Mauritius. Choose your language."
+    />
+    <link rel="canonical" href={new URL('/', site)} />
+    {
+      LANGS.map((l) => (
+        <link rel="alternate" hreflang={l} href={new URL(`/${l}/`, site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL('/', site)} />
+    <meta name="theme-color" content="#0a0c10" />
+
+    <script is:inline>
+      // Inline and in <head> so it runs before paint — a visitor with JS should
+      // never see the chooser flash. A remembered choice always wins over the
+      // browser's guess, so switching to French sticks on the next visit.
+      (function () {
+        try {
+          var stored = localStorage.getItem('lang');
+          var supported = ['en', 'fr'];
+          var pick =
+            supported.indexOf(stored) > -1
+              ? stored
+              : supported.indexOf((navigator.language || 'en').slice(0, 2).toLowerCase()) > -1
+                ? (navigator.language || 'en').slice(0, 2).toLowerCase()
+                : 'en';
+          location.replace('/' + pick + '/');
+        } catch (e) {
+          location.replace('/en/');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-plane text-ink">
+    <main class="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-16">
+      <p class="label">Sébastien Borges Lopes</p>
+      <h1 class="mt-6 text-h2">Choose a language · Choisissez une langue</h1>
+
+      <div class="mt-10 grid gap-3">
+        <a
+          href="/en/"
+          hreflang="en"
+          lang="en"
+          class="rounded-lg border border-line bg-surface px-5 py-4 transition-colors hover:border-line-strong"
+        >
+          <span class="font-mono text-xs uppercase tracking-widest text-ink-3">EN</span>
+          <span class="mt-1 block">English</span>
+        </a>
+        <a
+          href="/fr/"
+          hreflang="fr"
+          lang="fr"
+          class="rounded-lg border border-line bg-surface px-5 py-4 transition-colors hover:border-line-strong"
+        >
+          <span class="font-mono text-xs uppercase tracking-widest text-ink-3">FR</span>
+          <span class="mt-1 block">Français</span>
+        </a>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Section from '../../../components/Section.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import { LANGS, useTranslations, type Lang } from '../../../i18n/ui';
+import { getWork } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+const entries = await getWork(lang);
+
+const intro =
+  lang === 'fr'
+    ? 'Les clients ne sont pas nommés. Chaque étude de cas indique le secteur, l’échelle et l’année — ce qui porte l’essentiel de la crédibilité qu’un nom apporterait, les chiffres faisant le reste.'
+    : 'Clients are not named. Each case study states sector, scale, and year — which carries nearly all the credibility a name would, and the numbers do the rest.';
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('nav.work')} — Sébastien Borges Lopes`}
+  description={intro}
+>
+  <Section label={t('nav.work')} rule={false}>
+    <h1 class="text-h1">{t('nav.work')}</h1>
+    <p class="mt-8 measure text-ink-2">{intro}</p>
+
+    <div class="mt-16 grid gap-6 md:grid-cols-3">
+      {entries.map((entry) => <WorkCard lang={lang} entry={entry} />)}
+    </div>
+
+    {
+      entries.length === 0 && (
+        <p class="mt-16 measure text-ink-2">
+          {lang === 'fr'
+            ? 'Rien de publié pour l’instant : une étude de cas sans chiffre réel n’en est pas une.'
+            : 'Nothing published yet — a case study without a real number is not a case study.'}
+        </p>
+      )
+    }
+  </Section>
+</BaseLayout>

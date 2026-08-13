@@ -1,0 +1,32 @@
+---
+import Section from '../Section.astro';
+
+interface Props {
+  process: {
+    label: string;
+    title: string;
+    steps: { title: string; body: string }[];
+  };
+}
+
+const { process } = Astro.props;
+
+// Freelance prospects hesitate because the process is opaque. Naming it removes
+// the friction (site-plan.md §4.7) — so this is an ordered list, not a diagram.
+---
+
+<Section label={process.label} title={process.title}>
+  <ol class="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+    {
+      process.steps.map((step, i) => (
+        <li class="bg-surface p-7">
+          <span class="font-mono text-sm text-ink-3">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <h3 class="mt-4 text-h3">{step.title}</h3>
+          <p class="mt-3 text-sm text-ink-2">{step.body}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>

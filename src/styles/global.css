@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+
+/* =============================================================================
+   Design tokens
+   -----------------------------------------------------------------------------
+   Settled (design-system.md): the two surfaces and the chart palette. Those
+   hexes came out of an enumerated search scored on colour-blind separation —
+   editing one by eye invalidates the whole set. Load the `dataviz` skill and
+   re-run scripts/validate_palette.js before changing any of them.
+
+   PROVISIONAL: everything marked below. Interface ink, spacing, radius and type
+   are not yet designed. They are deliberately plain so the structure can be
+   judged before the visual system is decided.
+   ========================================================================== */
+
+@theme {
+  /* --- Surfaces — settled ------------------------------------------------ */
+  --color-plane: #0a0c10; /* page plane */
+  --color-surface: #12151c; /* chart surface, reused for cards and wells */
+  --color-surface-2: #171b24; /* PROVISIONAL: one step up, for hover/raised */
+
+  /* --- Chart palette — settled, fixed order, assign in sequence ---------- */
+  --color-series-1: #0891b2; /* cyan   — data */
+  --color-series-2: #d97706; /* amber  — marketing */
+  --color-series-3: #be185d; /* rose */
+  --color-series-4: #7c3aed; /* violet */
+  --color-series-5: #047857; /* emerald */
+  --color-series-6: #65a30d; /* lime */
+  --color-series-7: #2563eb; /* blue */
+  --color-series-8: #dc2626; /* red */
+
+  /* Sequential, light -> dark. Ordinal data only. */
+  --color-seq-1: #cffafe;
+  --color-seq-2: #67e8f9;
+  --color-seq-3: #22d3ee;
+  --color-seq-4: #06b6d4;
+  --color-seq-5: #0891b2;
+
+  /* --- Interface ink — PROVISIONAL --------------------------------------- */
+  --color-ink: #e8eaed; /* body and headings */
+  --color-ink-2: #a8aeb8; /* secondary prose */
+  --color-ink-3: #737b87; /* meta, mono labels */
+  --color-line: #ffffff1a; /* hairlines, card edges */
+  --color-line-strong: #ffffff2e; /* grid rules that should read */
+
+  /* Interactive accents. Deliberately NOT the series hexes: a series colour
+     carries data identity, an accent carries interaction. Keeping them apart
+     is what stops a link from looking like a chart legend. */
+  --color-accent: #22d3ee;
+  --color-accent-warm: #f59e0b;
+
+  /* --- Type — PROVISIONAL ------------------------------------------------
+     Neutral system stack pending the typography pass. Swapping in the real
+     faces is these two lines plus @font-face rules; nothing else references
+     a family name. */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Fluid scale. Steps are ~1.25 at the small end, widening toward display. */
+  --text-meta: 0.75rem;
+  --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --text-lead: clamp(1.125rem, 1.05rem + 0.38vw, 1.375rem);
+  --text-h3: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-h2: clamp(1.75rem, 1.45rem + 1.5vw, 2.75rem);
+  --text-h1: clamp(2.5rem, 1.8rem + 3.4vw, 5rem);
+
+  /* --- Shape — PROVISIONAL ---------------------------------------------- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+}
+
+/* =============================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    background-color: var(--color-plane);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Anchor targets clear the sticky header. */
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-plane);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.1;
+    text-wrap: balance;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-plane);
+  }
+
+  /* No meaning may live only in animation (design-system.md). Every scroll
+     sequence has a static equivalent; this switch is the global backstop. */
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =============================================================================
+   Chrome utilities
+   -----------------------------------------------------------------------------
+   design-system.md mandates a split: technical chrome, warm content. These are
+   the chrome side — mono labels and visible grid rules. Prose keeps the sans
+   stack and generous measure.
+   ========================================================================== */
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+@utility rule-t {
+  border-top: 1px solid var(--color-line);
+}
+
+/* The measure for running prose. Anything longer stops being readable. */
+@utility measure {
+  max-width: 62ch;
+}

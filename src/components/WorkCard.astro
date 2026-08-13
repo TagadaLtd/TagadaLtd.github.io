@@ -1,0 +1,48 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import { localPath } from '../i18n/paths';
+import { parseId, type WorkEntry } from '../lib/content';
+import PlaceholderBadge from './PlaceholderBadge.astro';
+
+interface Props {
+  lang: Lang;
+  entry: WorkEntry;
+}
+
+const { lang, entry } = Astro.props;
+const t = useTranslations(lang);
+const { slug } = parseId(entry.id);
+const href = localPath(lang, 'work', slug);
+
+// Cards lead with the number, not the client name (site-plan.md §5). Clients
+// cannot be named, so sector · scale · year carries the credibility instead —
+// which suits the constraint rather than fighting it.
+const headline = entry.data.results[0];
+---
+
+<article
+  class="group relative flex flex-col rounded-lg border border-line bg-surface p-6 transition-colors hover:border-line-strong"
+>
+  {entry.data.draft && <PlaceholderBadge lang={lang} />}
+
+  {
+    headline && (
+      <p class="font-mono text-h2 leading-none text-[color:var(--color-accent)]">
+        {headline.value}
+      </p>
+    )
+  }
+  {headline && <p class="mt-2 text-sm text-ink-2">{headline.label}</p>}
+
+  <h3 class="mt-6 text-h3">
+    <a href={href} class="after:absolute after:inset-0">{entry.data.title}</a>
+  </h3>
+  <p class="mt-3 text-sm text-ink-2">{entry.data.summary}</p>
+
+  <p class="label mt-auto pt-6">
+    {entry.data.sector} · {entry.data.scale} · {entry.data.year}
+  </p>
+  <p class="mt-3 text-sm text-[color:var(--color-accent)] transition-opacity group-hover:opacity-80">
+    {t('work.readCase')} →
+  </p>
+</article>

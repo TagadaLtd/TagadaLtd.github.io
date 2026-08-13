@@ -1,0 +1,21 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Marks anything rendered from a draft entry. It only ever appears in `astro
+// dev`, because drafts are stripped from the production build — but if the
+// draft filter ever regresses, this is loud enough to catch it in review.
+---
+
+<p
+  class="mb-3 inline-flex items-center gap-2 rounded-sm border border-[color:var(--color-series-2)] px-2 py-1 font-mono text-[0.6875rem] uppercase tracking-widest text-[color:var(--color-accent-warm)]"
+>
+  <span aria-hidden="true">●</span>
+  {t('placeholder.badge')}
+</p>

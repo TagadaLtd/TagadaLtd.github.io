@@ -1,0 +1,17 @@
+---
+interface Props {
+  thesis: { label: string; body: string };
+}
+
+const { thesis } = Astro.props;
+
+// The job of this section is one reaction: "that's us." So it stays prose, in
+// the warm half of the design split — no cards, no icons, no columns.
+---
+
+<section class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+  <div class="rule-t pt-10">
+    <p class="label">{thesis.label}</p>
+    <p class="mt-6 max-w-3xl text-lead text-ink">{thesis.body}</p>
+  </div>
+</section>

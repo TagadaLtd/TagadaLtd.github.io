@@ -1,0 +1,20 @@
+---
+import StubPage from '../../components/StubPage.astro';
+import { LANGS, useTranslations, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+// Required before Umami goes live, not after — GDPR applies to French visitors
+// regardless of where the site is hosted.
+const note =
+  lang === 'fr'
+    ? 'Ce qui est mesuré (Umami, sans cookies), ce que fait le formulaire de contact, ce que fait Kit pour la newsletter, et comment demander la suppression de ses données. À rédiger avant la mise en ligne des analytics.'
+    : 'What is measured (Umami, cookieless), what the contact form does, what Kit does for the newsletter, and how to request deletion. To be written before analytics go live.';
+---
+
+<StubPage lang={lang} title={t('footer.privacy')} note={note} />

@@ -1,0 +1,48 @@
+---
+import Section from '../Section.astro';
+import type { Lang } from '../../i18n/ui';
+import { localPath } from '../../i18n/paths';
+
+interface Props {
+  lang: Lang;
+  pillars: {
+    label: string;
+    title: string;
+    items: { title: string; body: string }[];
+  };
+}
+
+const { lang, pillars } = Astro.props;
+
+// Series 1 and 2 are cyan (data) and amber (marketing) — the two halves of the
+// positioning line, encoded. Slot 4 (violet) takes AI. Assigned in the palette's
+// fixed order, never cycled.
+const marks = ['var(--color-series-2)', 'var(--color-series-1)', 'var(--color-series-4)'];
+---
+
+<Section label={pillars.label} title={pillars.title}>
+  <ul class="grid gap-8 sm:grid-cols-3">
+    {
+      pillars.items.map((item, i) => (
+        <li>
+          {/* A coloured mark beside the label carries identity; the label itself
+              stays in neutral ink (design-system.md). */}
+          <span
+            class="block h-1 w-8 rounded-full"
+            style={`background:${marks[i % marks.length]}`}
+            aria-hidden="true"
+          />
+          <h3 class="mt-4 text-h3">{item.title}</h3>
+          <p class="mt-3 text-sm text-ink-2">{item.body}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <a
+    href={localPath(lang, 'services')}
+    class="mt-10 inline-block text-sm text-[color:var(--color-accent)] hover:opacity-80"
+  >
+    {pillars.label} →
+  </a>
+</Section>

@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Section from '../../components/Section.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import PostCard from '../../components/PostCard.astro';
+import Hero from '../../components/home/Hero.astro';
+import Thesis from '../../components/home/Thesis.astro';
+import Method from '../../components/home/Method.astro';
+import Pillars from '../../components/home/Pillars.astro';
+import Proof from '../../components/home/Proof.astro';
+import Process from '../../components/home/Process.astro';
+import Close from '../../components/home/Close.astro';
+
+import { LANGS, type Lang } from '../../i18n/ui';
+import { localPath } from '../../i18n/paths';
+import { getHome, getFeaturedWork, getPosts } from '../../lib/content';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const home = await getHome(lang);
+const work = await getFeaturedWork(lang, 3);
+const posts = (await getPosts(lang)).slice(0, 3);
+
+const title =
+  lang === 'fr'
+    ? 'Sébastien Borges Lopes — Marketing digital, données, IA'
+    : 'Sébastien Borges Lopes — Digital marketing, data, AI';
+---
+
+<BaseLayout lang={lang} title={title} description={home.hero.positioning}>
+  <Hero lang={lang} hero={home.hero} />
+  <Thesis thesis={home.thesis} />
+  <Method method={home.method} />
+  <Pillars lang={lang} pillars={home.pillars} />
+
+  <Section label={home.selectedWork.label} title={home.selectedWork.title}>
+    {
+      work.length > 0 ? (
+        <div class="grid gap-6 md:grid-cols-3">
+          {work.map((entry) => (
+            <WorkCard lang={lang} entry={entry} />
+          ))}
+        </div>
+      ) : (
+        <p class="measure text-ink-2">
+          {lang === 'fr'
+            ? 'Les études de cas arrivent — elles attendent des chiffres réels.'
+            : 'Case studies are on the way — they are waiting on real numbers.'}
+        </p>
+      )
+    }
+    <a
+      href={localPath(lang, 'work')}
+      class="mt-10 inline-block text-sm text-[color:var(--color-accent)] hover:opacity-80"
+    >
+      {home.selectedWork.cta} →
+    </a>
+  </Section>
+
+  <Proof proof={home.proof} />
+  <Process process={home.process} />
+
+  <Section label={home.writing.label} title={home.writing.title}>
+    {
+      posts.length > 0 ? (
+        <div class="grid gap-8 md:grid-cols-3">
+          {posts.map((entry) => (
+            <PostCard lang={lang} entry={entry} />
+          ))}
+        </div>
+      ) : (
+        <p class="measure text-ink-2">
+          {lang === 'fr'
+            ? 'Rien de publié pour l’instant. J’écris sur les données clients, la mesure et l’automatisation.'
+            : 'Nothing published yet. I write about customer data, measurement, and automation.'}
+        </p>
+      )
+    }
+    <a
+      href={localPath(lang, 'blog')}
+      class="mt-10 inline-block text-sm text-[color:var(--color-accent)] hover:opacity-80"
+    >
+      {home.writing.cta} →
+    </a>
+  </Section>
+
+  <Close lang={lang} close={home.close} />
+</BaseLayout>

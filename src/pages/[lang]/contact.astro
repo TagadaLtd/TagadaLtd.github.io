@@ -1,0 +1,21 @@
+---
+import StubPage from '../../components/StubPage.astro';
+import { LANGS, useTranslations, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+// Needs a Web3Forms access key before it can do anything: there is no server
+// here to accept a POST. Building a form that silently drops enquiries would be
+// worse than not having one.
+const note =
+  lang === 'fr'
+    ? 'Une colonne, quatre champs : nom, e-mail, « quel est votre besoin ? », budget (facultatif). Plus l’e-mail en clair, LinkedIn, le fuseau horaire et le délai de réponse. Attend une clé Web3Forms.'
+    : 'Single column, four fields: name, email, "what do you need help with?", optional budget. Plus the email address in plain text, LinkedIn, timezone, and response time. Waiting on a Web3Forms key.';
+---
+
+<StubPage lang={lang} title={t('nav.contact')} note={note} />

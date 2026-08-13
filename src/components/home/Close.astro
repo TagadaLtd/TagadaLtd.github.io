@@ -1,0 +1,36 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { localPath } from '../../i18n/paths';
+import { useTranslations } from '../../i18n/ui';
+import NewsletterForm from '../NewsletterForm.astro';
+
+interface Props {
+  lang: Lang;
+  close: { title: string; body: string; cta: string };
+}
+
+const { lang, close } = Astro.props;
+const t = useTranslations(lang);
+
+// Two actions, clearly ranked (site-plan.md §4.9): contact is primary, the
+// newsletter is a consolation prize for someone not ready to enquire.
+---
+
+<section class="mx-auto max-w-6xl px-5 py-24 sm:px-8 sm:py-32">
+  <div class="rounded-lg border border-line bg-surface p-8 sm:p-12">
+    <h2 class="max-w-2xl text-h2">{close.title}</h2>
+    <p class="mt-5 measure text-ink-2">{close.body}</p>
+
+    <a
+      href={localPath(lang, 'contact')}
+      class="mt-8 inline-block rounded-md bg-accent px-5 py-3 text-sm font-medium text-plane transition-opacity hover:opacity-90"
+    >
+      {close.cta}
+    </a>
+
+    <div class="mt-12 border-t border-line pt-8">
+      <p class="label">{t('footer.newsletter.title')}</p>
+      <NewsletterForm lang={lang} class="mt-4 max-w-md" />
+    </div>
+  </div>
+</section>

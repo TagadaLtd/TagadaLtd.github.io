@@ -1,0 +1,80 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { localPath } from '../../i18n/paths';
+
+interface Props {
+  lang: Lang;
+  hero: {
+    eyebrow: string;
+    positioning: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+  };
+}
+
+const { lang, hero } = Astro.props;
+
+// The scatter is the first beat of the Data -> Insight -> Action sequence:
+// scattered, unresolved points. Rendered statically here. The motion pass will
+// animate these same nodes rather than replacing them, so the reduced-motion
+// view and the animated view show the same thing at rest.
+//
+// Deterministic rather than Math.random(), so the built HTML is stable across
+// builds and diffs stay readable.
+// Positioned as absolute elements rather than SVG circles: an SVG stretched to
+// an arbitrary hero box turns its circles into ellipses, and a point that is
+// not round stops reading as a data point.
+const POINTS = 46;
+const points = Array.from({ length: POINTS }, (_, i) => {
+  const a = Math.sin(i * 12.9898) * 43758.5453;
+  const b = Math.sin(i * 78.233) * 24634.6345;
+  return {
+    left: ((a - Math.floor(a)) * 100).toFixed(2),
+    top: ((b - Math.floor(b)) * 100).toFixed(2),
+    size: 3 + ((i * 7) % 5),
+    opacity: (0.2 + ((i * 3) % 7) * 0.07).toFixed(2),
+  };
+});
+---
+
+<section class="relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    {
+      points.map((p) => (
+        <span
+          class="absolute rounded-full bg-accent"
+          style={`left:${p.left}%;top:${p.top}%;width:${p.size}px;height:${p.size}px;opacity:${p.opacity}`}
+        />
+      ))
+    }
+  </div>
+
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-transparent via-plane/60 to-plane"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative mx-auto max-w-6xl px-5 pb-24 pt-24 sm:px-8 sm:pb-32 sm:pt-36">
+    <p class="label">{hero.eyebrow}</p>
+
+    <h1 class="mt-6 max-w-4xl text-h1 font-semibold">
+      {hero.positioning}
+    </h1>
+
+    <div class="mt-10 flex flex-wrap items-center gap-3">
+      <a
+        href={localPath(lang, 'work')}
+        class="rounded-md bg-accent px-5 py-3 text-sm font-medium text-plane transition-opacity hover:opacity-90"
+      >
+        {hero.ctaPrimary}
+      </a>
+      <a
+        href={localPath(lang, 'contact')}
+        class="rounded-md border border-line px-5 py-3 text-sm text-ink transition-colors hover:border-line-strong"
+      >
+        {hero.ctaSecondary}
+      </a>
+    </div>
+  </div>
+</section>

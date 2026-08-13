@@ -1,0 +1,25 @@
+---
+interface Props {
+  /** Mono eyebrow. The "technical chrome" half of the design split. */
+  label?: string;
+  title?: string;
+  id?: string;
+  /** Draws the hairline above the section. Off for the first section on a page. */
+  rule?: boolean;
+  class?: string;
+}
+
+const { label, title, id, rule = true, class: className = '' } = Astro.props;
+---
+
+<section id={id} class:list={['mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28', className]}>
+  {
+    (label || title) && (
+      <header class:list={['pb-10', rule && 'rule-t pt-10']}>
+        {label && <p class="label">{label}</p>}
+        {title && <h2 class="mt-4 max-w-3xl text-h2">{title}</h2>}
+      </header>
+    )
+  }
+  <slot />
+</section>

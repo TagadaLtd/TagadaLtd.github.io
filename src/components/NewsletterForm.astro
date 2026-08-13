@@ -1,0 +1,55 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+
+const { lang, class: className = '' } = Astro.props;
+const t = useTranslations(lang);
+
+// One component, three placements (footer sitewide, end of each post, homepage
+// close) — site-plan.md §8. Kit hosts the submission and the double opt-in;
+// there is no server here to accept a POST.
+//
+// TODO(kit): replace with the real Kit form endpoint once the account exists.
+// Until then the field is disabled rather than silently dropping addresses.
+const KIT_FORM_ACTION = '';
+const configured = KIT_FORM_ACTION !== '';
+---
+
+<form
+  action={KIT_FORM_ACTION || undefined}
+  method="post"
+  class:list={['flex flex-col gap-2 sm:flex-row', className]}
+  data-configured={configured ? 'true' : 'false'}
+>
+  <label class="sr-only" for={`newsletter-email-${lang}`}>
+    {t('footer.newsletter.email')}
+  </label>
+  <input
+    id={`newsletter-email-${lang}`}
+    type="email"
+    name="email_address"
+    required
+    disabled={!configured}
+    autocomplete="email"
+    placeholder={t('footer.newsletter.email')}
+    class="min-w-0 flex-1 rounded-md border border-line bg-plane px-3 py-2 text-sm text-ink placeholder:text-ink-3 disabled:opacity-50"
+  />
+  <button
+    type="submit"
+    disabled={!configured}
+    class="rounded-md border border-line bg-surface-2 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-line-strong disabled:opacity-50"
+  >
+    {t('footer.newsletter.submit')}
+  </button>
+</form>
+{
+  !configured && (
+    <p class="mt-2 font-mono text-xs text-ink-3">
+      Newsletter not connected yet — needs a Kit account.
+    </p>
+  )
+}

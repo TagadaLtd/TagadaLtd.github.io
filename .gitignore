@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+.env
+.env.production
+
+# Planning docs stay local. The repo is public, and these describe positioning,
+# pricing posture, and audience analysis — including the clients they discuss.
+CLAUDE.md
+site-plan.md
+design-system.md
+content-brief.md

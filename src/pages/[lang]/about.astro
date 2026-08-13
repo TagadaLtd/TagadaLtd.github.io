@@ -1,0 +1,18 @@
+---
+import StubPage from '../../components/StubPage.astro';
+import { LANGS, useTranslations, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+const note =
+  lang === 'fr'
+    ? 'Le récit d’abord, les références ensuite : narration, frise 2017 → aujourd’hui, compétences, certifications, quelques lignes hors travail, et le CV en PDF. Attend le texte validé et une photo.'
+    : 'Story first, credentials second: narrative, a 2017 → today timeline, skills, certifications, a few lines beyond work, and the CV as a PDF. Waiting on approved copy and a photo.';
+---
+
+<StubPage lang={lang} title={t('nav.about')} note={note} />

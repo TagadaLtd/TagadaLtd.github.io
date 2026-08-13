@@ -1,0 +1,111 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import { localPath, isActiveSection } from '../i18n/paths';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const pathname = Astro.url.pathname;
+
+// Five items is the upper end of comfortable (site-plan.md §3) — no dropdowns,
+// everything one click from anywhere.
+const nav = [
+  { key: 'nav.work', href: localPath(lang, 'work') },
+  { key: 'nav.services', href: localPath(lang, 'services') },
+  { key: 'nav.about', href: localPath(lang, 'about') },
+  { key: 'nav.blog', href: localPath(lang, 'blog') },
+  { key: 'nav.contact', href: localPath(lang, 'contact') },
+] as const;
+
+const contactHref = localPath(lang, 'contact');
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-plane/85 backdrop-blur-md">
+  <div class="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3 sm:px-8">
+    <a
+      href={localPath(lang)}
+      class="font-mono text-sm tracking-tight text-ink transition-colors hover:text-accent"
+    >
+      Sébastien<span class="text-ink-3"> Borges Lopes</span>
+    </a>
+
+    <nav aria-label="Primary" class="ml-auto hidden items-center gap-1 md:flex">
+      {
+        nav.map(({ key, href }) => {
+          const active = isActiveSection(pathname, href);
+          return (
+            <a
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              class:list={[
+                'rounded-md px-3 py-2 text-sm transition-colors',
+                active ? 'text-ink' : 'text-ink-2 hover:text-ink',
+              ]}
+            >
+              {t(key)}
+              {active && <span class="mx-auto mt-1 block h-px w-4 bg-accent" aria-hidden="true" />}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2 md:ml-0">
+      <LanguageSwitcher lang={lang} />
+
+      <a
+        href={contactHref}
+        class="hidden rounded-md bg-accent px-4 py-2 text-sm font-medium text-plane transition-opacity hover:opacity-90 sm:inline-block"
+      >
+        {t('nav.cta')}
+      </a>
+
+      <!-- <details> rather than a script: the mobile menu opens with JavaScript
+           disabled, which matters because / already depends on JS for detection. -->
+      <details class="relative md:hidden">
+        <summary
+          class="flex cursor-pointer list-none items-center rounded-md border border-line px-3 py-2 font-mono text-xs uppercase tracking-widest text-ink-2"
+        >
+          {t('nav.menu')}
+        </summary>
+        <nav
+          aria-label="Primary"
+          class="absolute right-0 top-full mt-2 w-56 rounded-lg border border-line bg-surface p-2 shadow-2xl"
+        >
+          {
+            nav.map(({ key, href }) => (
+              <a
+                href={href}
+                aria-current={isActiveSection(pathname, href) ? 'page' : undefined}
+                class:list={[
+                  'block rounded-md px-3 py-2 text-sm',
+                  isActiveSection(pathname, href)
+                    ? 'bg-surface-2 text-ink'
+                    : 'text-ink-2 hover:text-ink',
+                ]}
+              >
+                {t(key)}
+              </a>
+            ))
+          }
+          <a
+            href={contactHref}
+            class="mt-1 block rounded-md bg-accent px-3 py-2 text-center text-sm font-medium text-plane sm:hidden"
+          >
+            {t('nav.cta')}
+          </a>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

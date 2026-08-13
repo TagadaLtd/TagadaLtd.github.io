@@ -1,0 +1,21 @@
+---
+import StubPage from '../../components/StubPage.astro';
+import { LANGS, useTranslations, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+// Blocked on a decision, not on code: the three services in site-plan.md §6 are
+// proposed, not confirmed. What Sébastien has done is not necessarily what he
+// wants to sell, and building the page around the wrong three is wasted work.
+const note =
+  lang === 'fr'
+    ? 'Trois prestations, sans prix affichés, chacune avec une estimation de durée et un bouton « Demander un devis ». Les trois proposées dans site-plan.md §6 attendent confirmation.'
+    : 'Three services, no published prices, each with a duration estimate and a "Request a quote" CTA. The three proposed in site-plan.md §6 are awaiting confirmation.';
+---
+
+<StubPage lang={lang} title={t('nav.services')} note={note} />

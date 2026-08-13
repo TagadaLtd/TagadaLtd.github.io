@@ -1,0 +1,369 @@
+# Pages CMS configuration — https://pagescms.org
+#
+# This file decides what Sébastien can edit at pagescms.org without touching
+# code. Anything not listed here is invisible in the CMS, which is deliberate:
+# the fewer editable surfaces, the fewer ways to break a build.
+#
+# The FR and EN halves of each collection are listed separately and their field
+# lists are written out in full rather than shared with a YAML anchor — the
+# duplication is worth it, because a config that fails to parse locks the owner
+# out of his own site.
+#
+# The pairing rule (every entry in both languages) is NOT enforced here. Pages
+# CMS edits one file at a time and cannot see across languages. It is enforced
+# by scripts/check-content.mjs, which runs before every build and blocks the
+# deploy — so a half-translated entry commits fine and simply never goes live.
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  # --- Homepage -------------------------------------------------------------
+  - name: home_en
+    label: Homepage (English)
+    type: file
+    path: src/content/home/en.yaml
+    fields:
+      - name: hero
+        label: Hero
+        type: object
+        fields:
+          - { name: eyebrow, label: Eyebrow, type: string }
+          - {
+              name: positioning,
+              label: Positioning line,
+              type: text,
+              description: 'Settled — do not change without agreeing it first.',
+            }
+          - { name: ctaPrimary, label: Primary button, type: string }
+          - { name: ctaSecondary, label: Secondary button, type: string }
+      - name: thesis
+        label: The problem
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: body, label: Body, type: text }
+      - name: method
+        label: Data → Insight → Action
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - name: beats
+            label: Three beats
+            type: object
+            list: { min: 3, max: 3 }
+            fields:
+              - { name: step, label: Number, type: string }
+              - { name: title, label: Title, type: string }
+              - { name: body, label: Body, type: text }
+      - name: pillars
+        label: What I do
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - name: items
+            label: Pillars
+            type: object
+            list: true
+            fields:
+              - { name: title, label: Title, type: string }
+              - { name: body, label: Body, type: text }
+      - name: selectedWork
+        label: Selected work
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - { name: cta, label: Link text, type: string }
+      - name: proof
+        label: Track record
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - name: stats
+            label: Numbers
+            type: object
+            list: true
+            fields:
+              - { name: value, label: Value, type: string }
+              - { name: label, label: Label, type: string }
+          - { name: certifications, label: Certifications, type: string, list: true }
+      - name: process
+        label: How we would work together
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - name: steps
+            label: Steps
+            type: object
+            list: true
+            fields:
+              - { name: title, label: Title, type: string }
+              - { name: body, label: Body, type: text }
+      - name: writing
+        label: Latest writing
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - { name: cta, label: Link text, type: string }
+      - name: close
+        label: Closing section
+        type: object
+        fields:
+          - { name: title, label: Title, type: string }
+          - { name: body, label: Body, type: text }
+          - { name: cta, label: Button, type: string }
+
+  - name: home_fr
+    label: Page d’accueil (Français)
+    type: file
+    path: src/content/home/fr.yaml
+    fields:
+      - name: hero
+        label: Hero
+        type: object
+        fields:
+          - { name: eyebrow, label: Sur-titre, type: string }
+          - {
+              name: positioning,
+              label: Phrase de positionnement,
+              type: text,
+              description: 'Arrêtée — ne pas modifier sans en convenir d’abord.',
+            }
+          - { name: ctaPrimary, label: Bouton principal, type: string }
+          - { name: ctaSecondary, label: Bouton secondaire, type: string }
+      - name: thesis
+        label: Le problème
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: body, label: Texte, type: text }
+      - name: method
+        label: Données → Information → Action
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - name: beats
+            label: Trois temps
+            type: object
+            list: { min: 3, max: 3 }
+            fields:
+              - { name: step, label: Numéro, type: string }
+              - { name: title, label: Titre, type: string }
+              - { name: body, label: Texte, type: text }
+      - name: pillars
+        label: Ce que je fais
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - name: items
+            label: Piliers
+            type: object
+            list: true
+            fields:
+              - { name: title, label: Titre, type: string }
+              - { name: body, label: Texte, type: text }
+      - name: selectedWork
+        label: Réalisations choisies
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - { name: cta, label: Texte du lien, type: string }
+      - name: proof
+        label: Parcours
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - name: stats
+            label: Chiffres
+            type: object
+            list: true
+            fields:
+              - { name: value, label: Valeur, type: string }
+              - { name: label, label: Libellé, type: string }
+          - { name: certifications, label: Certifications, type: string, list: true }
+      - name: process
+        label: Comment nous travaillerions
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - name: steps
+            label: Étapes
+            type: object
+            list: true
+            fields:
+              - { name: title, label: Titre, type: string }
+              - { name: body, label: Texte, type: text }
+      - name: writing
+        label: Derniers écrits
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - { name: cta, label: Texte du lien, type: string }
+      - name: close
+        label: Section de clôture
+        type: object
+        fields:
+          - { name: title, label: Titre, type: string }
+          - { name: body, label: Texte, type: text }
+          - { name: cta, label: Bouton, type: string }
+
+  # --- Case studies ---------------------------------------------------------
+  - name: work_en
+    label: Case studies (English)
+    type: collection
+    path: src/content/work/en
+    filename: '{fields.title}.md'
+    view:
+      fields: [title, year, featured, draft]
+    fields:
+      - {
+          name: title,
+          label: Title,
+          type: string,
+          description: 'Lead with the outcome, not the task.',
+        }
+      - { name: summary, label: Summary, type: text }
+      - { name: sector, label: Sector, type: string }
+      - {
+          name: scale,
+          label: Scale,
+          type: string,
+          description: 'e.g. ~40,000 customer records. Never the client name.',
+        }
+      - { name: role, label: Your role, type: string }
+      - { name: timeframe, label: Timeframe, type: string }
+      - { name: year, label: Year, type: number }
+      - { name: tools, label: Tools, type: string, list: true }
+      - name: results
+        label: Results
+        type: object
+        list: { max: 4 }
+        description: 'Real figures only. If there is no number, keep this a draft.'
+        fields:
+          - { name: value, label: Value, type: string }
+          - { name: label, label: Label, type: string }
+          - { name: note, label: Note, type: string, required: false }
+      - { name: featured, label: Show on homepage, type: boolean, default: false }
+      - { name: order, label: Order, type: number, default: 99 }
+      - {
+          name: draft,
+          label: Draft,
+          type: boolean,
+          default: true,
+          description: 'Drafts never appear on the live site.',
+        }
+      - { name: body, label: Body, type: rich-text }
+
+  - name: work_fr
+    label: Études de cas (Français)
+    type: collection
+    path: src/content/work/fr
+    filename: '{fields.title}.md'
+    view:
+      fields: [title, year, featured, draft]
+    fields:
+      - {
+          name: title,
+          label: Titre,
+          type: string,
+          description: 'Annoncer le résultat, pas la tâche. Le nom de fichier doit être identique à la version anglaise.',
+        }
+      - { name: summary, label: Résumé, type: text }
+      - { name: sector, label: Secteur, type: string }
+      - {
+          name: scale,
+          label: Échelle,
+          type: string,
+          description: 'ex. ~40 000 fiches clients. Jamais le nom du client.',
+        }
+      - { name: role, label: Votre rôle, type: string }
+      - { name: timeframe, label: Durée, type: string }
+      - { name: year, label: Année, type: number }
+      - { name: tools, label: Outils, type: string, list: true }
+      - name: results
+        label: Résultats
+        type: object
+        list: { max: 4 }
+        description: 'Chiffres réels uniquement. Sans chiffre, garder en brouillon.'
+        fields:
+          - { name: value, label: Valeur, type: string }
+          - { name: label, label: Libellé, type: string }
+          - { name: note, label: Note, type: string, required: false }
+      - { name: featured, label: Afficher en page d’accueil, type: boolean, default: false }
+      - { name: order, label: Ordre, type: number, default: 99 }
+      - {
+          name: draft,
+          label: Brouillon,
+          type: boolean,
+          default: true,
+          description: 'Les brouillons n’apparaissent jamais sur le site.',
+        }
+      - { name: body, label: Contenu, type: rich-text }
+
+  # --- Blog -----------------------------------------------------------------
+  - name: blog_en
+    label: Blog posts (English)
+    type: collection
+    path: src/content/blog/en
+    filename: '{fields.title}.md'
+    view:
+      fields: [title, date, category, draft]
+    fields:
+      - { name: title, label: Title, type: string }
+      - { name: description, label: Description, type: text }
+      - { name: date, label: Date, type: date }
+      - name: category
+        label: Category
+        type: select
+        options:
+          values:
+            - { value: data, label: Data & Analytics }
+            - { value: marketing, label: Marketing }
+            - { value: ai, label: AI & Automation }
+      - {
+          name: draft,
+          label: Draft,
+          type: boolean,
+          default: true,
+          description: 'A post cannot go live without its French twin — same filename, in the French folder.',
+        }
+      - { name: body, label: Body, type: rich-text }
+
+  - name: blog_fr
+    label: Articles (Français)
+    type: collection
+    path: src/content/blog/fr
+    filename: '{fields.title}.md'
+    view:
+      fields: [title, date, category, draft]
+    fields:
+      - { name: title, label: Titre, type: string }
+      - { name: description, label: Description, type: text }
+      - { name: date, label: Date, type: date }
+      - name: category
+        label: Catégorie
+        type: select
+        options:
+          values:
+            - { value: data, label: Données & Analytics }
+            - { value: marketing, label: Marketing }
+            - { value: ai, label: IA & Automatisation }
+      - {
+          name: draft,
+          label: Brouillon,
+          type: boolean,
+          default: true,
+          description: 'Un article ne peut pas être publié sans sa version anglaise — même nom de fichier, dans le dossier anglais.',
+        }
+      - { name: body, label: Contenu, type: rich-text }

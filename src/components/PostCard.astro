@@ -1,0 +1,36 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import { localPath } from '../i18n/paths';
+import { parseId, readingTime, type BlogEntry } from '../lib/content';
+import PlaceholderBadge from './PlaceholderBadge.astro';
+
+interface Props {
+  lang: Lang;
+  entry: BlogEntry;
+}
+
+const { lang, entry } = Astro.props;
+const t = useTranslations(lang);
+const { slug } = parseId(entry.id);
+const href = localPath(lang, 'blog', slug);
+
+const minutes = readingTime(entry.body ?? '');
+const date = entry.data.date.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// No language badge on the card: every post exists in both languages
+// (site-plan.md §11.4), so a badge would carry no information.
+---
+
+<article class="group relative rule-t pt-6">
+  {entry.data.draft && <PlaceholderBadge lang={lang} />}
+
+  <p class="label">{date} · {minutes} {t('blog.readingTime')}</p>
+  <h3 class="mt-3 text-h3">
+    <a href={href} class="after:absolute after:inset-0">{entry.data.title}</a>
+  </h3>
+  <p class="mt-3 measure text-sm text-ink-2">{entry.data.description}</p>
+</article>

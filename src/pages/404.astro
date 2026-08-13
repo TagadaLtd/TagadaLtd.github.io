@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import { DEFAULT_LANG, type Lang } from '../i18n/ui';
+
+// GitHub Pages serves one 404.html for the whole domain, so this page cannot
+// know the visitor's language. It shows both, which is the same honest answer
+// the language gate at / gives.
+const lang = DEFAULT_LANG as Lang;
+---
+
+<BaseLayout lang={lang} title="Not found — Sébastien Borges Lopes" description="Page not found." noindex>
+  <Section rule={false}>
+    <p class="label">404</p>
+    <h1 class="mt-6 text-h1">Page not found<br /><span class="text-ink-3">Page introuvable</span></h1>
+    <div class="mt-10 flex gap-3">
+      <a
+        href="/en/"
+        class="rounded-md border border-line px-5 py-3 text-sm transition-colors hover:border-line-strong"
+        >English home</a
+      >
+      <a
+        href="/fr/"
+        class="rounded-md border border-line px-5 py-3 text-sm transition-colors hover:border-line-strong"
+        >Accueil français</a
+      >
+    </div>
+  </Section>
+</BaseLayout>

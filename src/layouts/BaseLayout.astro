@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
+import { alternates } from '../i18n/paths';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Set on pages that should not be indexed (404, thank-you states). */
+  noindex?: boolean;
+}
+
+const { lang, title, description, noindex = false } = Astro.props;
+const t = useTranslations(lang);
+
+const pathname = Astro.url.pathname;
+const canonical = new URL(pathname, Astro.site);
+const langAlternates = alternates(pathname);
+
+// x-default points at the language gate at /, which is the only page that
+// decides for the visitor. Deep links never redirect (site-plan.md §12).
+const xDefault = new URL('/', Astro.site);
+---
+
+<!doctype html>
+<html lang={lang} class="scroll-pt-24">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    {
+      langAlternates.map(({ lang: l, path }) => (
+        <link rel="alternate" hreflang={l} href={new URL(path, Astro.site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={xDefault} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_GB'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#0a0c10" />
+
+    <!-- TODO(analytics): Umami script goes here once the instance exists. -->
+    <!-- TODO(favicon): real favicon set. -->
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-plane text-ink">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-3 focus:left-3 focus:bg-surface focus:text-ink focus:px-4 focus:py-2 focus:rounded-md"
+    >
+      {t('nav.skip')}
+    </a>
+
+    <Header lang={lang} />
+
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,107 @@
+# Homepage copy — English.
+# The positioning line is settled (CLAUDE.md). Everything else is a first draft
+# for Sébastien to rewrite in his own voice.
+
+hero:
+  eyebrow: "Digital marketing · Data · AI — Mauritius"
+  positioning: "I sit between your marketing team and your data, and make them talk."
+  ctaPrimary: "See my work"
+  ctaSecondary: "Work with me"
+
+thesis:
+  label: "The problem"
+  body: >-
+    Most companies collect more customer data than they will ever act on. It sits in a CRM
+    nobody trusts, a spreadsheet somebody left behind, an analytics account with three years
+    of history and no owner. The gap is rarely the data. It is that the people who could use
+    it and the people who understand it are not the same people.
+
+method:
+  label: "How I work"
+  title: "Data becomes insight becomes action."
+  beats:
+    - step: "01"
+      title: "Data"
+      body: >-
+        Scattered, duplicated, half-tagged. We start by finding out what you actually have —
+        what is reliable, what is noise, and what is missing entirely.
+    - step: "02"
+      title: "Insight"
+      body: >-
+        Structure emerges. Segments, cohorts, the handful of numbers that move the business.
+        Not a dashboard with forty charts — the four that change a decision.
+    - step: "03"
+      title: "Action"
+      body: >-
+        A campaign that targets the right people, a report that writes itself, a decision
+        somebody can defend. The point was never the analysis.
+
+pillars:
+  label: "What I do"
+  title: "Three sides of the same job."
+  items:
+    - title: "Marketing"
+      body: >-
+        SEO audits, acquisition, paid campaigns, marketing automation. Six years agency-side
+        and in-house, so the recommendations survive contact with a real budget.
+    - title: "Data"
+      body: >-
+        SQL, Python, Power BI, Looker Studio. Customer segmentation, tracking plans,
+        reporting that stops eating a day a week.
+    - title: "AI"
+      body: >-
+        Machine learning fundamentals applied where they pay for themselves — scoring,
+        classification, and the automation of work nobody enjoys doing twice.
+
+selectedWork:
+  label: "Selected work"
+  title: "Problems, and what changed."
+  cta: "All case studies"
+
+proof:
+  label: "Track record"
+  stats:
+    - value: "2019"
+      label: "Working in digital marketing since"
+    - value: "24 wks"
+      label: "Data & AI training, Le Wagon"
+    # A third stat belongs here — the strongest client outcome, once one case
+    # study has a real figure attached. Deliberately absent rather than invented.
+  certifications:
+    - "Google Analytics"
+    - "HubSpot"
+    - "SALESmanago"
+    - "Le Wagon"
+
+process:
+  label: "How we would work together"
+  title: "No mystery, four steps."
+  steps:
+    - title: "A first call"
+      body: >-
+        Thirty minutes. You describe the problem, I tell you honestly whether I am the right
+        person for it.
+    - title: "A scoped proposal"
+      body: >-
+        What I would do, what you would get, how long it takes and what it costs. One page,
+        fixed price, no retainer you cannot leave.
+    - title: "The work"
+      body: >-
+        Weekly check-ins so nothing arrives as a surprise. You see the thing being built,
+        not a status update about it.
+    - title: "Handover"
+      body: >-
+        Documented, and demonstrated to whoever has to run it after I leave. Work that only
+        I can maintain is work I have done badly.
+
+writing:
+  label: "Writing"
+  title: "Notes on marketing and data."
+  cta: "All posts"
+
+close:
+  title: "Have a problem that sits between marketing and data?"
+  body: >-
+    Tell me what you are trying to work out. If I am not the right person I will say so, and
+    usually I can point you at someone who is.
+  cta: "Request a quote"

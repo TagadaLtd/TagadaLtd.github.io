@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Section from '../../../components/Section.astro';
+import PostCard from '../../../components/PostCard.astro';
+import NewsletterForm from '../../../components/NewsletterForm.astro';
+import { LANGS, useTranslations, type Lang } from '../../../i18n/ui';
+import { getPosts } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+const posts = await getPosts(lang);
+
+// The index must look intentional at three posts, not empty (site-plan.md §8).
+// Hence a real intro line rather than a blank list.
+const intro =
+  lang === 'fr'
+    ? 'Notes sur les données clients, la mesure, et l’automatisation — en français et en anglais, toujours les deux.'
+    : 'Notes on customer data, measurement, and automation — in French and English, always both.';
+---
+
+<BaseLayout lang={lang} title={`${t('nav.blog')} — Sébastien Borges Lopes`} description={intro}>
+  <Section label={t('nav.blog')} rule={false}>
+    <h1 class="text-h1">{t('nav.blog')}</h1>
+    <p class="mt-8 measure text-ink-2">{intro}</p>
+
+    <div class="mt-16 grid gap-10 md:grid-cols-3">
+      {posts.map((entry) => <PostCard lang={lang} entry={entry} />)}
+    </div>
+
+    {
+      posts.length === 0 && (
+        <p class="mt-16 measure text-ink-2">
+          {lang === 'fr' ? 'Rien de publié pour l’instant.' : 'Nothing published yet.'}
+        </p>
+      )
+    }
+
+    <div class="mt-20 rule-t pt-10">
+      <p class="label">{t('footer.newsletter.title')}</p>
+      <NewsletterForm lang={lang} class="mt-4 max-w-md" />
+    </div>
+  </Section>
+</BaseLayout>
