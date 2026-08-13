@@ -1,0 +1,152 @@
+---
+interface Delta {
+  /** Signed, and written as it should read: "+12.4%", "−9.2%", "+0.4pt". */
+  value: string;
+  /** What it is measured against. "vs last year", not "vs previous period". */
+  period: string;
+  /** Whether the move is good news. Down is good for a cost. */
+  tone?: 'good' | 'bad' | 'neutral';
+}
+
+interface Props {
+  label: string;
+  value: string;
+  delta?: Delta;
+  /** Oldest → newest. Any length; the sparkline scales to fit. */
+  trend?: number[];
+  /** Index within the row, for the reveal stagger. */
+  index?: number;
+}
+
+const { label, value, delta, trend, index = 0 } = Astro.props;
+
+// A stat tile is the answer to "this is one current number" — the form you
+// reach for instead of drawing a one-bar bar chart.
+//
+// Both the delta and the sparkline are optional and independent, because most
+// numbers have neither. A start year has no direction and no trend; asking it
+// to carry a sparkline would mean inventing a series, which is the one thing
+// this project does not do (CLAUDE.md). A tile with only a label and a value
+// is a complete, correct tile.
+//
+// Direction is never carried by colour alone: every delta ships an arrow and a
+// sign as well, so it survives colour blindness, greyscale print and
+// forced-colors.
+const down = /^[-−–]/.test(delta?.value ?? '');
+const tone = delta?.tone ?? 'neutral';
+const toneClass =
+  tone === 'good' ? 'text-[color:var(--color-good)]'
+  : tone === 'bad' ? 'text-[color:var(--color-bad)]'
+  : 'text-ink-2';
+
+// Sparkline geometry. Drawn at a fixed viewBox and scaled by CSS, so the
+// stroke weight stays consistent wherever the tile lands.
+const W = 132;
+const H = 30;
+const PAD = 3;
+let path = '';
+let endX = 0;
+let endY = 0;
+
+if (trend && trend.length > 1) {
+  const min = Math.min(...trend);
+  const max = Math.max(...trend);
+  const span = max - min || 1;
+  const pts = trend.map((v, i) => {
+    const x = PAD + (i / (trend.length - 1)) * (W - PAD * 2);
+    const y = H - PAD - ((v - min) / span) * (H - PAD * 2);
+    return [x, y] as const;
+  });
+  path = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  [endX, endY] = pts[pts.length - 1];
+}
+---
+
+<div class="stat-tile" data-reveal style={`--reveal-i:${index}`}>
+  {/* The label is the term, the value is the answer — so the definition list
+      runs value-first visually while keeping dt before dd in the source. */}
+  <dt class="sr-only">{label}</dt>
+  <dd>
+    <span class="num block text-stat leading-none text-ink">{value}</span>
+
+    {
+      delta && (
+        <p class:list={['mt-3 flex flex-wrap items-baseline gap-x-2 text-sm', toneClass]}>
+          <span class="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" class="text-[0.6875em]">
+              {down ? '▼' : '▲'}
+            </span>
+            {delta.value}
+          </span>
+          <span class="text-ink-3">{delta.period}</span>
+        </p>
+      )
+    }
+
+    <span class="mt-4 block max-w-[24ch] text-sm text-ink-2">{label}</span>
+
+    {
+      path && (
+        <svg
+          class="spark mt-5"
+          viewBox={`0 0 ${W} ${H}`}
+          width={W}
+          height={H}
+          aria-hidden="true"
+          focusable="false"
+        >
+          {/* The line sits in the de-emphasis hue and only the current period
+              carries the accent — the tile's job is the number, not the plot. */}
+          <path
+            class="spark-line"
+            d={path}
+            pathLength="1"
+            fill="none"
+            stroke="var(--color-line-strong)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <circle
+            class="spark-end"
+            cx={endX.toFixed(1)}
+            cy={endY.toFixed(1)}
+            r="3.5"
+            fill="var(--color-accent)"
+            stroke="var(--color-plane)"
+            stroke-width="2"
+          />
+        </svg>
+      )
+    }
+  </dd>
+</div>
+
+<style>
+  .spark {
+    display: block;
+    width: 100%;
+    max-width: 8.25rem;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Same gesture as every other chart here: on hover the data comes forward.
+     Outside the .js-motion guard because it runs from a resting state that is
+     already correct, and inside (hover: hover) so a tap cannot strand it. */
+  .spark-line,
+  .spark-end {
+    transition:
+      stroke 0.3s var(--ease-out),
+      r 0.3s var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .stat-tile:hover .spark-line {
+      stroke: var(--color-accent);
+    }
+    .stat-tile:hover .spark-end {
+      r: 4.5;
+    }
+  }
+</style>

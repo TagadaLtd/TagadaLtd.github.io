@@ -90,6 +90,26 @@ content:
             fields:
               - { name: value, label: Value, type: string }
               - { name: label, label: Label, type: string }
+              # Optional. Only fill these in for a number that was actually
+              # measured over time — a start year has no direction and no
+              # series, and inventing one is the thing we never do.
+              - name: delta
+                label: Change (optional)
+                type: object
+                required: false
+                fields:
+                  - { name: value, label: "Signed change, e.g. +12.4%", type: string }
+                  - { name: period, label: "Compared with, e.g. vs last year", type: string }
+                  - name: tone
+                    label: Is this good news?
+                    type: select
+                    options: { values: [neutral, good, bad] }
+                    default: neutral
+              - name: trend
+                label: Sparkline points, oldest first (optional)
+                type: number
+                list: true
+                required: false
           - { name: certifications, label: Certifications, type: string, list: true }
       - name: process
         label: How we would work together
@@ -189,6 +209,25 @@ content:
             fields:
               - { name: value, label: Valeur, type: string }
               - { name: label, label: Libellé, type: string }
+              # Facultatif. À ne remplir que pour un chiffre réellement mesuré
+              # dans le temps.
+              - name: delta
+                label: Évolution (facultatif)
+                type: object
+                required: false
+                fields:
+                  - { name: value, label: "Évolution signée, ex. +12,4 %", type: string }
+                  - { name: period, label: "Par rapport à, ex. vs l'an dernier", type: string }
+                  - name: tone
+                    label: Est-ce une bonne nouvelle ?
+                    type: select
+                    options: { values: [neutral, good, bad] }
+                    default: neutral
+              - name: trend
+                label: Points de la sparkline, du plus ancien au plus récent (facultatif)
+                type: number
+                list: true
+                required: false
           - { name: certifications, label: Certifications, type: string, list: true }
       - name: process
         label: Comment nous travaillerions

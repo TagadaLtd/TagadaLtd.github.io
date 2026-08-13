@@ -70,6 +70,22 @@ proof:
       label: "Formation data & IA, Le Wagon"
     # Un troisième chiffre a sa place ici — le résultat client le plus fort, dès
     # qu'une étude de cas aura un chiffre réel. Volontairement absent, pas inventé.
+  # Chaque chiffre peut aussi porter une évolution et une sparkline. Les deux
+  # sont facultatifs et volontairement vides ici : une évolution demande une
+  # période de comparaison et une sparkline demande une vraie série. Les deux
+  # nombres ci-dessus sont des faits, pas des mesures.
+  #
+  # Exemple de remplissage, le jour où un résultat client existe :
+  #
+  #   - value: "20 min"
+  #     label: "Temps de reporting hebdomadaire, contre six heures"
+  #     delta:
+  #       value: "-94 %"
+  #       period: "vs avant la refonte"
+  #       tone: good
+  #     trend: [360, 340, 300, 240, 180, 90, 45, 20]
+  #
+  # Uniquement des chiffres réels.
   certifications:
     - "Google Analytics"
     - "HubSpot"

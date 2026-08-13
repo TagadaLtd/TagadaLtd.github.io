@@ -1,32 +1,44 @@
 ---
 import Section from '../Section.astro';
+import StatTile from '../StatTile.astro';
 
 interface Props {
   proof: {
     label: string;
-    stats: { value: string; label: string }[];
+    stats: {
+      value: string;
+      label: string;
+      delta?: { value: string; period: string; tone: 'good' | 'bad' | 'neutral' };
+      trend?: number[];
+    }[];
     certifications: string[];
   };
 }
 
 const { proof } = Astro.props;
 
-// Reassurance, not spectacle (site-plan.md §4.6). Quiet strip, no animation.
+// Reassurance, not spectacle (site-plan.md §4.6). Quiet strip.
 // Figures are set in mono with tabular numerals — they are measurements, and
 // they should look like readings rather than headlines.
+//
+// Each number is a stat tile, which can carry a delta and a sparkline. Neither
+// is filled in yet, and that is correct rather than unfinished: a delta needs a
+// named comparison period and a sparkline needs a real series, and the two
+// numbers here — a start year and a course length — have neither. They render
+// as plain tiles until a measured value with history takes their place.
 ---
 
 <Section label={proof.label} icon="ticks" tone="proof">
   <dl class="grid gap-10 border-t border-line pt-10 sm:grid-cols-3 sm:gap-8" data-reveal-group>
     {
-      proof.stats.map((stat) => (
-        <div data-reveal>
-          <dt class="sr-only">{stat.label}</dt>
-          <dd>
-            <span class="num block text-stat leading-none text-ink">{stat.value}</span>
-            <span class="mt-4 block max-w-[24ch] text-sm text-ink-2">{stat.label}</span>
-          </dd>
-        </div>
+      proof.stats.map((stat, i) => (
+        <StatTile
+          label={stat.label}
+          value={stat.value}
+          delta={stat.delta}
+          trend={stat.trend}
+          index={i}
+        />
       ))
     }
   </dl>

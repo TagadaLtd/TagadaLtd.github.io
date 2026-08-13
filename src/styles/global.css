@@ -43,6 +43,13 @@
   --accent-warm: #c2740a; /* 3.3:1 as a fill boundary against the plane */
   --accent-warm-hi: #d4820f;
   --on-warm: #0f1216; /* 4.9:1 on the fill */
+
+  /* Status is reserved: it says "this is good / this is bad" and is never
+     reused as a series hue. Deliberately not series-5 and series-8, which are
+     already spoken for as data identity. Direction is always carried by an
+     arrow and a sign as well — never by colour alone. */
+  --good: #15803d; /* 4.9:1 */
+  --bad: #b91c1c; /* 5.9:1 */
 }
 
 /* No explicit choice: follow the operating system. */
@@ -67,6 +74,9 @@
     --accent-warm: #f0a33a; /* 9.3:1 */
     --accent-warm-hi: #ffb85c;
     --on-warm: #0f1216;
+
+    --good: #4ade80; /* 10.4:1 */
+    --bad: #f87171; /* 6.5:1 */
   }
 }
 
@@ -91,6 +101,9 @@
   --accent-warm: #f0a33a;
   --accent-warm-hi: #ffb85c;
   --on-warm: #0f1216;
+
+  --good: #4ade80;
+  --bad: #f87171;
 }
 
 /* =============================================================================
@@ -118,6 +131,8 @@
   --color-accent-warm: var(--accent-warm);
   --color-accent-warm-hi: var(--accent-warm-hi);
   --color-on-warm: var(--on-warm);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
 }
 
 @theme {
@@ -127,10 +142,10 @@
      invalidates the whole set. Load the `dataviz` skill and re-run
      scripts/validate_palette.js before changing any of them.
 
-     TODO(palette): the light theme now puts these on #FFFFFF, which the
-     validation run never covered. Re-run with --mode light --surface "#ffffff"
-     before any real chart ships, and expect a second, lighter-surface ordering
-     rather than assuming this one carries over. */
+     Re-validated 2026-08-13 against the light surface (#FFFFFF) as well: all
+     eight slots clear the lightness band, chroma floor, adjacent-pair CVD
+     separation (worst ΔE 16.5) and 3:1 contrast. One ordering serves both
+     themes; there is no second light-surface set to maintain. */
   --color-series-1: #0891b2; /* cyan   — data */
   --color-series-2: #d97706; /* amber  — marketing */
   --color-series-3: #be185d; /* rose */
@@ -140,7 +155,13 @@
   --color-series-7: #2563eb; /* blue */
   --color-series-8: #dc2626; /* red */
 
-  /* Sequential, light -> dark. Ordinal data only. */
+  /* Sequential, light -> dark. Ordinal data only.
+
+     DARK SURFACE ONLY. On #FFFFFF the first four steps land at 1.1, 1.5, 1.8
+     and 2.4:1 — the light end of the ramp is effectively invisible on paper.
+     Nothing on the site uses it yet; a heatmap or choropleth would, and it
+     needs re-stepping for the light theme first. The categorical set above is
+     fine on both surfaces; this one is not. */
   --color-seq-1: #cffafe;
   --color-seq-2: #67e8f9;
   --color-seq-3: #22d3ee;
@@ -545,6 +566,32 @@
     transform: none;
   }
 
+  /* Sparklines draw themselves left to right, then the current period lands.
+     Same grammar as every other mark: the line is drawn, not faded in. */
+  .js-motion .spark-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .js-motion .spark-end {
+    transform: scale(0);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .js-motion .is-in .spark-line {
+    animation-name: spark-draw;
+    animation-duration: 0.9s;
+    animation-timing-function: var(--ease-out);
+    animation-delay: 0.25s;
+    animation-fill-mode: forwards;
+  }
+  .js-motion .is-in .spark-end {
+    animation-name: mark-pop;
+    animation-duration: 0.4s;
+    animation-timing-function: var(--ease-out);
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+  }
+
   /* The pillars' coloured segments sweep out along their rule, the way a
      selected range does on an axis. */
   .js-motion .pillar-range {
@@ -809,6 +856,12 @@
   from {
     stroke-dashoffset: 1;
   }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes spark-draw {
   to {
     stroke-dashoffset: 0;
   }

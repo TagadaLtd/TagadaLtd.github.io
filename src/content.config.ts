@@ -84,7 +84,27 @@ const home = defineCollection({
     selectedWork: z.object({ label: z.string(), title: z.string(), cta: z.string() }),
     proof: z.object({
       label: z.string(),
-      stats: z.array(z.object({ value: z.string(), label: z.string() })),
+      stats: z.array(
+        z.object({
+          value: z.string(),
+          label: z.string(),
+          // Both optional, and independent of each other. Most numbers have
+          // neither: a start year has no direction and no series behind it.
+          // A tile is complete with a label and a value alone — these are for
+          // measured values that genuinely moved.
+          delta: z
+            .object({
+              value: z.string(), // signed, as it should read: "+12.4%", "−9.2%"
+              period: z.string(), // what it is measured against
+              // Down is good for a cost, so direction and sentiment are
+              // separate fields rather than derived from the sign.
+              tone: z.enum(['good', 'bad', 'neutral']).default('neutral'),
+            })
+            .optional(),
+          /** Oldest → newest. At least two points, or there is no line. */
+          trend: z.array(z.number()).min(2).optional(),
+        })
+      ),
       certifications: z.array(z.string()),
     }),
     process: z.object({

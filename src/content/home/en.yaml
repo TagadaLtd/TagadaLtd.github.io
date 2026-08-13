@@ -67,6 +67,24 @@ proof:
       label: "Data & AI training, Le Wagon"
     # A third stat belongs here — the strongest client outcome, once one case
     # study has a real figure attached. Deliberately absent rather than invented.
+  # Each stat can also carry a change and a sparkline. Both are optional and
+  # both are left empty on purpose: a delta needs a named comparison period and
+  # a sparkline needs a real series, and neither of the two numbers above has
+  # either. They are facts, not measurements.
+  #
+  # The natural place for a filled-in tile is a client outcome, once one exists.
+  # It would look like this:
+  #
+  #   - value: "20 min"
+  #     label: "Weekly reporting time, down from six hours"
+  #     delta:
+  #       value: "-94%"
+  #       period: "vs before the rebuild"
+  #       tone: good
+  #     trend: [360, 340, 300, 240, 180, 90, 45, 20]
+  #
+  # Real numbers only. An invented figure on a live page is the one failure
+  # mode with no cheap recovery.
   certifications:
     - "Google Analytics"
     - "HubSpot"
