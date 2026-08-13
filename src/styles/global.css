@@ -493,15 +493,27 @@
     transform: scale(0);
   }
 
+  /* Longhands, not the `animation` shorthand. A shorthand containing a var()
+     becomes a pending substitution: it serialises as a set of empty longhands
+     and any rule that re-reads or re-parses it silently loses the animation
+     name. Spelling them out keeps every declaration inspectable. */
   .js-motion .is-in .glyph :is(path, line, rect) {
-    animation: mark-draw 0.75s var(--ease-out) 0.12s forwards;
+    animation-name: mark-draw;
+    animation-duration: 0.75s;
+    animation-timing-function: var(--ease-out);
+    animation-delay: 0.12s;
+    animation-fill-mode: forwards;
   }
   /* Axes first, then the data on top of them. */
   .js-motion .is-in .glyph .glyph-axis {
     animation-delay: 0s;
   }
   .js-motion .is-in .glyph circle {
-    animation: mark-pop 0.45s var(--ease-out) 0.5s forwards;
+    animation-name: mark-pop;
+    animation-duration: 0.45s;
+    animation-timing-function: var(--ease-out);
+    animation-delay: 0.5s;
+    animation-fill-mode: forwards;
   }
 
   /* Beat 01 — a records grid filling in on the diagonal. */
@@ -574,11 +586,15 @@
 .mark-dot,
 .mark-bar,
 .plot-point,
-.plot-residual {
+.plot-residual,
+.beat-scan,
+.beat-threshold,
+.cluster-ring {
   transition:
     transform 0.45s var(--ease-out),
     opacity 0.45s var(--ease-out),
     background-color 0.45s var(--ease-out),
+    left 0.6s var(--ease-out),
     top 0.6s var(--ease-out),
     height 0.6s var(--ease-out);
 }
@@ -587,11 +603,48 @@
   opacity: var(--o, 1);
 }
 .mark-dot {
+  left: var(--x);
+  top: var(--y);
   background: var(--hue, var(--color-accent));
 }
 .mark-bar {
   background: var(--bar, var(--color-line-strong));
   transform-origin: bottom;
+}
+
+/* The two sweeping rules, and the segment rings. All three rest invisible —
+   they are the *operation*, not the data, so unlike every other mark on the
+   page their resting state is genuinely nothing. The chart underneath is
+   complete without them. */
+.beat-scan {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-accent-warm);
+  opacity: 0;
+}
+
+.beat-threshold {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-accent-warm);
+  opacity: 0;
+}
+
+.cluster-ring {
+  position: absolute;
+  width: 3.25rem;
+  height: 3.25rem;
+  translate: -50% -50%;
+  opacity: 0;
+}
+.cluster-ring circle {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
 /* Resting position is the observed one: where the measurement actually fell. */
@@ -616,28 +669,69 @@
    uncertainty around it recedes. Delays run across the mark, so the response
    reads as a sweep rather than a flash. */
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  /* --- Beat 01: the audit ------------------------------------------------
+     A scan line crosses the table, and the column it is passing reports back.
+     What survives goes to full strength; what was never filled in lights up
+     marigold, because "what is missing entirely" is the finding, not the
+     background. Delays run by column so the wave keeps pace with the line. */
+  .beat:hover .beat-scan {
+    animation-name: scan-x;
+    animation-duration: 1.05s;
+    animation-timing-function: var(--ease-out);
+    animation-fill-mode: both;
+  }
   .beat:hover .mark-cell {
-    transition-delay: calc(var(--i, 0) * 14ms);
+    transition-delay: calc(var(--c, 0) * 26ms);
+    transform: scale(1.14);
   }
   .beat:hover .mark-cell[data-present='true'] {
     opacity: 1;
   }
-  /* The holes light up faintly: hovering asks "what is missing?", and the
-     answer is the part of the grid that was never filled in. */
   .beat:hover .mark-cell[data-present='false'] {
-    background-color: var(--color-accent);
-    opacity: 0.14;
+    background-color: var(--color-accent-warm);
+    opacity: 0.55;
   }
 
+  /* --- Beat 02: the clustering -------------------------------------------
+     Every point closes onto its group's centre and the segment draws around
+     it. This is the beat where structure emerges, so on hover it emerges. */
   .beat:hover .mark-dot {
-    transform: scale(1.55);
-    transition-delay: calc(var(--i, 0) * 12ms);
+    left: var(--cx);
+    top: var(--cy);
+    transform: scale(1.35);
+    transition-delay: calc(var(--i, 0) * 14ms);
+  }
+  .beat:hover .cluster-ring {
+    opacity: 1;
+    transition-delay: calc(var(--i, 0) * 90ms + 260ms);
+  }
+  .beat:hover .cluster-ring circle {
+    animation-name: ring-draw;
+    animation-duration: 0.7s;
+    animation-timing-function: var(--ease-out);
+    animation-delay: calc(var(--i, 0) * 90ms + 260ms);
+    animation-fill-mode: both;
   }
 
-  /* Only the chosen bar rises. The rest stay where they are, which is what
-     makes the choice visible. */
+  /* --- Beat 03: the call -------------------------------------------------
+     The threshold draws across, the field settles back, and the one option
+     that clears it rises. Nothing here reports a value — the bars carry no
+     scale — so shrinking the rest reads as setting them aside. */
+  .beat:hover .beat-threshold {
+    opacity: 1;
+    animation-name: wipe-x;
+    animation-duration: 0.9s;
+    animation-timing-function: var(--ease-out);
+    animation-fill-mode: both;
+  }
+  .beat:hover .mark-bar {
+    transform: scaleY(0.82);
+    opacity: 0.5;
+    transition-delay: calc(var(--i, 0) * 45ms);
+  }
   .beat:hover .mark-bar[data-chosen] {
-    transform: scaleY(1.1);
+    transform: scaleY(1);
+    opacity: 1;
   }
 
   /* The hero band, and the one moment on the site worth reaching for.
@@ -678,6 +772,45 @@
 @keyframes mark-pop {
   to {
     transform: scale(1);
+  }
+}
+
+/* The hover operations. Each is named separately from its reveal counterpart
+   on purpose: an animation only restarts when its name actually changes, so
+   reusing `mark-draw` here would fire once and then sit still on every hover
+   after — the failure looks like it works, the first time. */
+@keyframes scan-x {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes wipe-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ring-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
