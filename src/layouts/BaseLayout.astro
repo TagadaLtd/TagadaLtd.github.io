@@ -9,20 +9,55 @@ interface Props {
   lang: Lang;
   title: string;
   description: string;
-  /** Set on pages that should not be indexed (404, thank-you states). */
+  /** Set on pages that should not be indexed (404, thank-you states, empty listings). */
   noindex?: boolean;
+  /**
+   * The 404 shell is one physical file for every language and every missing
+   * URL (GitHub Pages serves it site-wide) — there is no per-language variant
+   * to link to, so hreflang alternates and the header's language switcher
+   * would otherwise point at /en/404/ and /fr/404/, neither of which exist.
+   * Setting this swaps both to the two real language homepages.
+   */
+  langHomeOnly?: boolean;
+  /** Defaults to the site-wide card for this language; pass to override per page. */
+  ogImage?: string;
+  /** Extra JSON-LD objects to emit alongside the sitewide Person schema. */
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { lang, title, description, noindex = false } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  noindex = false,
+  langHomeOnly = false,
+  ogImage = `/og/home-${lang}.png`,
+  jsonLd = [],
+} = Astro.props;
 const t = useTranslations(lang);
 
 const pathname = Astro.url.pathname;
 const canonical = new URL(pathname, Astro.site);
 const langAlternates = alternates(pathname);
+const ogImageUrl = new URL(ogImage, Astro.site);
 
 // x-default points at the language gate at /, which is the only page that
 // decides for the visitor. Deep links never redirect (site-plan.md §12).
 const xDefault = new URL('/', Astro.site);
+
+// Sitewide identity, emitted on every page — this is a personal portfolio,
+// so Person is the correct type rather than Organization. sameAs carries the
+// LinkedIn profile already linked from the footer.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sébastien Borges Lopes',
+  url: String(new URL('/', Astro.site)),
+  jobTitle: 'Digital marketing & data analytics',
+  address: { '@type': 'PostalAddress', addressLocality: 'Moka', addressCountry: 'MU' },
+  sameAs: ['https://www.linkedin.com/in/sebastien-borgeslopes'],
+};
+const ldBlocks = [person, ...jsonLd];
 ---
 
 <!doctype html>
@@ -33,12 +68,22 @@ const xDefault = new URL('/', Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {/* Discoverable but held back, not hidden: "follow" lets the crawler
+        keep moving through the nav on stub and empty-listing pages rather
+        than treating them as dead ends. */}
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     {
-      langAlternates.map(({ lang: l, path }) => (
-        <link rel="alternate" hreflang={l} href={new URL(path, Astro.site)} />
-      ))
+      langHomeOnly ? (
+        <>
+          <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
+          <link rel="alternate" hreflang="fr" href={new URL('/fr/', Astro.site)} />
+        </>
+      ) : (
+        langAlternates.map(({ lang: l, path }) => (
+          <link rel="alternate" hreflang={l} href={new URL(path, Astro.site)} />
+        ))
+      )
     }
     <link rel="alternate" hreflang="x-default" href={xDefault} />
 
@@ -47,9 +92,23 @@ const xDefault = new URL('/', Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_GB'} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <meta name="theme-color" content="#0a0c10" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    {
+      ldBlocks.map((block) => (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(block)} />
+      ))
+    }
 
     <script is:inline>
       // Inline and in <head> so it runs before paint — no flash of the wrong
@@ -88,7 +147,6 @@ const xDefault = new URL('/', Astro.site);
     </script>
 
     <!-- TODO(analytics): Umami script goes here once the instance exists. -->
-    <!-- TODO(favicon): real favicon set. -->
   </head>
 
   <body class="flex min-h-screen flex-col bg-plane text-ink">
@@ -99,7 +157,7 @@ const xDefault = new URL('/', Astro.site);
       {t('nav.skip')}
     </a>
 
-    <Header lang={lang} />
+    <Header lang={lang} langHomeOnly={langHomeOnly} />
 
     <main id="main" class="flex-1">
       <slot />

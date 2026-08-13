@@ -4,9 +4,16 @@ import { translatePath } from '../i18n/paths';
 
 interface Props {
   lang: Lang;
+  /**
+   * The 404 shell has no per-language equivalent to swap to (site-wide,
+   * GitHub Pages, one physical file). When set, links go to the language
+   * homepage instead of translatePath(pathname), which would otherwise build
+   * an address like /fr/404/ that nothing serves.
+   */
+  langHomeOnly?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, langHomeOnly = false } = Astro.props;
 const t = useTranslations(lang);
 const pathname = Astro.url.pathname;
 
@@ -15,7 +22,7 @@ const pathname = Astro.url.pathname;
 // language — not a homepage bounce.
 const options = (LANGS as readonly Lang[]).map((code) => ({
   code,
-  href: translatePath(pathname, code),
+  href: langHomeOnly ? `/${code}/` : translatePath(pathname, code),
   label: code.toUpperCase(),
   full: t(code === 'fr' ? 'lang.fr' : 'lang.en'),
 }));

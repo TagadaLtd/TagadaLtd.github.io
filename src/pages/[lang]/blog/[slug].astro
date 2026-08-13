@@ -25,12 +25,26 @@ const date = entry.data.date.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB
   month: 'long',
   day: 'numeric',
 });
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const blogPosting = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: entry.data.date.toISOString(),
+  inLanguage: lang,
+  url: String(canonicalUrl),
+  mainEntityOfPage: String(canonicalUrl),
+  author: { '@type': 'Person', name: 'Sébastien Borges Lopes' },
+};
 ---
 
 <BaseLayout
   lang={lang}
   title={`${entry.data.title} — Sébastien Borges Lopes`}
   description={entry.data.description}
+  jsonLd={[blogPosting]}
 >
   <article class="shell max-w-3xl py-16 sm:py-24">
     {entry.data.draft && <PlaceholderBadge lang={lang} />}

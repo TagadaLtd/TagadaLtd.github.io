@@ -30,9 +30,30 @@ const meta = [
   ['Timeframe', d.timeframe],
   [t('work.year'), String(d.year)],
 ] as const;
+
+// Article rather than a case-study-specific type — schema.org has none, and
+// Article is the closest correct fit for a written outcome with an author
+// and a date. No client name (site-plan.md §5), so no `about` organization.
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.summary,
+  inLanguage: lang,
+  url: String(canonicalUrl),
+  mainEntityOfPage: String(canonicalUrl),
+  datePublished: `${d.year}-01-01`,
+  author: { '@type': 'Person', name: 'Sébastien Borges Lopes' },
+};
 ---
 
-<BaseLayout lang={lang} title={`${d.title} — Sébastien Borges Lopes`} description={d.summary}>
+<BaseLayout
+  lang={lang}
+  title={`${d.title} — Sébastien Borges Lopes`}
+  description={d.summary}
+  jsonLd={[article]}
+>
   <article class="shell max-w-4xl py-16 sm:py-24">
     {d.draft && <PlaceholderBadge lang={lang} />}
 

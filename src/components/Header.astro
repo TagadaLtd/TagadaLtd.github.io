@@ -6,9 +6,11 @@ import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   lang: Lang;
+  /** See BaseLayout — passed straight through to the language switcher. */
+  langHomeOnly?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, langHomeOnly = false } = Astro.props;
 const t = useTranslations(lang);
 const pathname = Astro.url.pathname;
 
@@ -64,7 +66,7 @@ const contactHref = localPath(lang, 'contact');
 
     <div class="ml-auto flex items-center gap-2 lg:ml-4">
       <ThemeToggle lang={lang} />
-      <LanguageSwitcher lang={lang} />
+      <LanguageSwitcher lang={lang} langHomeOnly={langHomeOnly} />
 
       <!-- Outlined, not filled. The solid marigold is reserved for the one
            primary action inside the page — a persistent filled button in the

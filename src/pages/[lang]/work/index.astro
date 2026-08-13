@@ -19,10 +19,14 @@ const intro =
     : 'Clients are not named. Each case study states sector, scale, and year — which carries nearly all the credibility a name would, and the numbers do the rest.';
 ---
 
+{/* All three case studies are currently draft (blocked on real numbers —
+   CLAUDE.md), so this list is empty in production — noindex until the first
+   one publishes. */}
 <BaseLayout
   lang={lang}
   title={`${t('nav.work')} — Sébastien Borges Lopes`}
   description={intro}
+  noindex={entries.length === 0}
 >
   <PageHeader lang={lang} title={t('nav.work')} intro={intro} />
 

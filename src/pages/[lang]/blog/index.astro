@@ -22,7 +22,15 @@ const intro =
     : 'Notes on customer data, measurement, and automation — in French and English, always both.';
 ---
 
-<BaseLayout lang={lang} title={`${t('nav.blog')} — Sébastien Borges Lopes`} description={intro}>
+{/* The only post is currently draft, so this list is empty in production —
+   noindex until the first one publishes, or Google indexes a page whose
+   entire content is one sentence. */}
+<BaseLayout
+  lang={lang}
+  title={`${t('nav.blog')} — Sébastien Borges Lopes`}
+  description={intro}
+  noindex={posts.length === 0}
+>
   <PageHeader lang={lang} title={t('nav.blog')} intro={intro} />
 
   <section class="shell section-y">
