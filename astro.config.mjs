@@ -5,9 +5,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 import { LANGS, DEFAULT_LANG } from './src/i18n/config.mjs';
 
-// TODO(domain): replace with the real domain once chosen. This value only
-// affects absolute URLs in the sitemap and hreflang tags.
-const SITE = 'https://example.com';
+// The GitHub Pages user site for this account. Served from the domain root, so
+// no `base` is needed and every internal path stays absolute.
+//
+// When a real domain is chosen: change this line, add a CNAME file to public/,
+// and point the DNS at GitHub. Nothing else refers to the host.
+const SITE = 'https://tagadaltd.github.io';
 
 export default defineConfig({
   site: SITE,
