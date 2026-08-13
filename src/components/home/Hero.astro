@@ -60,6 +60,9 @@ const points = Array.from({ length: N }, (_, i) => {
   return {
     x: x.toFixed(2),
     y: y.toFixed(2),
+    // Where this observation would sit if it were on the line. Hovering the
+    // band sends every point here, so the scatter resolves into the fit.
+    fy: fy.toFixed(2),
     // The residual: how far this observation sits from the line.
     top: Math.min(y, fy).toFixed(2),
     height: Math.abs(y - fy).toFixed(2),
@@ -95,11 +98,14 @@ const points = Array.from({ length: N }, (_, i) => {
     <div class="plot-band relative h-40 w-full sm:h-52 lg:h-60" aria-hidden="true">
       <div class="plot-paper absolute inset-0 opacity-90"></div>
 
+      {/* Positions travel as custom properties, not as inline top/height:
+          hovering animates them, and an inline value would outrank every rule
+          that tries to. */}
       {
         points.map((p, i) => (
           <span
             class="plot-residual absolute w-px"
-            style={`left:${p.x}%;top:${p.top}%;height:${p.height}%;--i:${i}`}
+            style={`left:${p.x}%;--top:${p.top}%;--h:${p.height}%;--fy:${p.fy}%;--i:${i}`}
           />
         ))
       }
@@ -132,7 +138,7 @@ const points = Array.from({ length: N }, (_, i) => {
         points.map((p, i) => (
           <span
             class="plot-point absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={`left:${p.x}%;top:${p.y}%;width:${p.size}px;height:${p.size}px;--o:${p.opacity};--i:${i}`}
+            style={`left:${p.x}%;--oy:${p.y}%;--fy:${p.fy}%;width:${p.size}px;height:${p.size}px;--o:${p.opacity};--i:${i}`}
           />
         ))
       }
@@ -175,7 +181,33 @@ const points = Array.from({ length: N }, (_, i) => {
     animation: draw-fit 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  /* Hovering redraws the line, start to end, every time.
+
+     This has to sit on the svg rather than on .fit-wrap, and under a second
+     keyframe name. An animation only restarts when its name actually changes:
+     re-declaring `draw-fit` on the same element that already ran `draw-fit`
+     changes the duration and nothing else, so the wipe would fire once on
+     reveal and never again. Here the name goes absent -> present on every
+     hover, which is a new animation each time.
+
+     With no animation applied, the svg has no clip at all — so the resting
+     state after the pointer leaves is simply the finished line. */
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .plot-band:hover .fit-wrap svg {
+      animation: redraw-fit 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+  }
+
   @keyframes draw-fit {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes redraw-fit {
     from {
       clip-path: inset(0 100% 0 0);
     }

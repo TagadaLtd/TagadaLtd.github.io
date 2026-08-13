@@ -578,7 +578,9 @@
   transition:
     transform 0.45s var(--ease-out),
     opacity 0.45s var(--ease-out),
-    background-color 0.3s var(--ease-out);
+    background-color 0.45s var(--ease-out),
+    top 0.6s var(--ease-out),
+    height 0.6s var(--ease-out);
 }
 
 .mark-cell {
@@ -591,11 +593,16 @@
   background: var(--bar, var(--color-line-strong));
   transform-origin: bottom;
 }
+
+/* Resting position is the observed one: where the measurement actually fell. */
 .plot-point {
+  top: var(--oy);
   opacity: var(--o, 1);
   background: var(--color-accent);
 }
 .plot-residual {
+  top: var(--top);
+  height: var(--h);
   opacity: 0.35;
   background: var(--color-accent);
 }
@@ -633,19 +640,32 @@
     transform: scaleY(1.1);
   }
 
-  /* The hero band. Points swell and the residuals brighten — the gesture of
-     looking closer at a scatter. The sweep runs left to right, the direction
-     the fitted line was drawn in. */
+  /* The hero band, and the one moment on the site worth reaching for.
+     Hovering runs the regression: every observation migrates onto the fitted
+     line, its residual closing to nothing behind it, and takes the line's
+     colour as it lands — cyan (data) becoming marigold (the answer). The
+     line itself redraws underneath, start to end, so it reads as collecting
+     the points rather than sitting there while they arrive.
+
+     The stagger runs left to right at the same rate as the wipe, so the two
+     move together. Points are ordered by x, so `--i` is already that sweep.
+
+     Every property here animates back on its own when the pointer leaves, so
+     the scatter re-scatters — the resting state is untouched. */
   .plot-band .plot-point,
   .plot-band .plot-residual {
     transition-delay: calc(var(--i, 0) * 9ms);
   }
   .plot-band:hover .plot-point {
-    transform: scale(1.55);
+    top: var(--fy);
+    background-color: var(--color-accent-warm);
+    transform: scale(1.2);
     opacity: 1;
   }
   .plot-band:hover .plot-residual {
-    opacity: 0.8;
+    top: var(--fy);
+    height: 0;
+    opacity: 0;
   }
 }
 
