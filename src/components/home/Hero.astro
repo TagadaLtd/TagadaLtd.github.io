@@ -96,10 +96,10 @@ const points = Array.from({ length: N }, (_, i) => {
       <div class="plot-paper absolute inset-0 opacity-90"></div>
 
       {
-        points.map((p) => (
+        points.map((p, i) => (
           <span
-            class="absolute w-px bg-accent/35"
-            style={`left:${p.x}%;top:${p.top}%;height:${p.height}%`}
+            class="plot-residual absolute w-px"
+            style={`left:${p.x}%;top:${p.top}%;height:${p.height}%;--i:${i}`}
           />
         ))
       }
@@ -129,10 +129,10 @@ const points = Array.from({ length: N }, (_, i) => {
       </div>
 
       {
-        points.map((p) => (
+        points.map((p, i) => (
           <span
-            class="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
-            style={`left:${p.x}%;top:${p.y}%;width:${p.size}px;height:${p.size}px;opacity:${p.opacity}`}
+            class="plot-point absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={`left:${p.x}%;top:${p.y}%;width:${p.size}px;height:${p.size}px;--o:${p.opacity};--i:${i}`}
           />
         ))
       }

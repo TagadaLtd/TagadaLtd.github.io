@@ -19,7 +19,7 @@ const { process } = Astro.props;
 // reads as a sequence down the page instead of four boxes of equal weight.
 ---
 
-<Section label={process.label} title={process.title} icon="flow">
+<Section label={process.label} title={process.title} icon="flow" tone="accent">
   <ol class="grid gap-x-8 sm:grid-cols-2" data-reveal-group>
     {
       process.steps.map((step, i) => (

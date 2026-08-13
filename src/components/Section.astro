@@ -1,6 +1,6 @@
 ---
 import Glyph from './Glyph.astro';
-import type { GlyphName } from './glyphs';
+import type { GlyphName, GlyphTone } from './glyphs';
 
 interface Props {
   /** Mono eyebrow. The "technical chrome" half of the design split. */
@@ -8,13 +8,15 @@ interface Props {
   title?: string;
   /** Chart mark shown beside the label. See Glyph.astro for what each says. */
   icon?: GlyphName;
+  /** Palette slot for that mark. See glyphs.ts. */
+  tone?: GlyphTone;
   id?: string;
   /** Draws the hairline above the section. Off for the first section on a page. */
   rule?: boolean;
   class?: string;
 }
 
-const { label, title, icon, id, rule = true, class: className = '' } = Astro.props;
+const { label, title, icon, tone, id, rule = true, class: className = '' } = Astro.props;
 
 // The header is a two-column row on wide screens: the mono label sits in a
 // narrow left rail, the title in the reading column. It puts every section
@@ -28,8 +30,8 @@ const { label, title, icon, id, rule = true, class: className = '' } = Astro.pro
       <header class:list={['pb-12', rule && 'rule-t pt-10']}>
         <div class="grid gap-x-10 gap-y-4 md:grid-cols-[10rem_minmax(0,1fr)]">
           {label && (
-            <p class="label flex items-center gap-2.5 md:pt-2" data-reveal>
-              {icon && <Glyph name={icon} />}
+            <p class="label flex items-center gap-2.5 md:pt-1.5" data-reveal>
+              {icon && <Glyph name={icon} tone={tone} />}
               {label}
             </p>
           )}

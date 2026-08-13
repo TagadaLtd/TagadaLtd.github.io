@@ -20,7 +20,7 @@ const { lang, pillars } = Astro.props;
 const marks = ['var(--color-series-2)', 'var(--color-series-1)', 'var(--color-series-4)'];
 ---
 
-<Section label={pillars.label} title={pillars.title} icon="ranges">
+<Section label={pillars.label} title={pillars.title} icon="ranges" tone="marketing">
   <ul class="grid gap-10 sm:grid-cols-3 sm:gap-8" data-reveal-group>
     {
       pillars.items.map((item, i) => (
@@ -29,7 +29,7 @@ const marks = ['var(--color-series-2)', 'var(--color-series-1)', 'var(--color-se
               an axis. A coloured mark beside a label carries identity; the
               label itself stays in neutral ink (design-system.md). */}
           <span
-            class="-mt-6 mb-6 block h-0.5 w-10"
+            class="pillar-range -mt-6 mb-6 block h-0.5 w-10"
             style={`background:${marks[i % marks.length]}`}
             aria-hidden="true"
           />

@@ -36,7 +36,7 @@ const title =
   <Method method={home.method} />
   <Pillars lang={lang} pillars={home.pillars} />
 
-  <Section label={home.selectedWork.label} title={home.selectedWork.title} icon="panels">
+  <Section label={home.selectedWork.label} title={home.selectedWork.title} icon="panels" tone="ai">
     {
       work.length > 0 ? (
         <div class="grid gap-6 md:grid-cols-3" data-reveal-group>
@@ -61,7 +61,7 @@ const title =
   <Proof proof={home.proof} />
   <Process process={home.process} />
 
-  <Section label={home.writing.label} title={home.writing.title} icon="lines">
+  <Section label={home.writing.label} title={home.writing.title} icon="lines" tone="writing">
     {
       posts.length > 0 ? (
         <div class="grid gap-8 md:grid-cols-3" data-reveal-group>

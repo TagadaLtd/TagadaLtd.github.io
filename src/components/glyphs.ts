@@ -16,3 +16,22 @@ export type GlyphName =
   | 'lines'
   | 'scatter'
   | 'target';
+
+/**
+ * Marks are drawn in the chart palette, but they are section *identity* rather
+ * than data encoding — so unlike a series, they are assigned by meaning, not in
+ * sequence. Nothing on the page reads two of them as comparable quantities.
+ *
+ * The rule they do keep: a coloured mark beside a label carries identity, the
+ * label itself stays in neutral ink (design-system.md).
+ */
+export type GlyphTone = 'accent' | 'data' | 'marketing' | 'ai' | 'proof' | 'writing';
+
+export const TONE_VAR: Record<GlyphTone, string> = {
+  accent: 'var(--color-accent)',
+  data: 'var(--color-series-1)', // cyan
+  marketing: 'var(--color-series-2)', // amber
+  ai: 'var(--color-series-4)', // violet
+  proof: 'var(--color-series-5)', // emerald
+  writing: 'var(--color-series-3)', // rose
+};

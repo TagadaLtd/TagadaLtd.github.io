@@ -1,12 +1,15 @@
 ---
-import type { GlyphName } from './glyphs';
+import type { GlyphName, GlyphTone } from './glyphs';
+import { TONE_VAR } from './glyphs';
 
 interface Props {
   name: GlyphName;
+  /** Palette slot the mark is drawn in. See glyphs.ts for the assignment. */
+  tone?: GlyphTone;
   class?: string;
 }
 
-const { name, class: className = '' } = Astro.props;
+const { name, tone = 'accent', class: className = '' } = Astro.props;
 
 // Section marks, drawn from the same vocabulary as the hero figure: axes,
 // points, ranges, rules. Deliberately not a general-purpose icon set — a
@@ -23,16 +26,22 @@ const { name, class: className = '' } = Astro.props;
 //   scatter  unresolved points
 //   target   a point located on two axes
 //
-// 16px grid, hairline strokes, currentColor. They inherit the label's colour,
-// so a mark never carries a series hue (design-system.md).
+// 16px grid, everything in currentColor, which the tone below sets. A mark
+// beside a label may carry a hue; the label itself never does
+// (design-system.md).
+//
+// pathLength="1" on every stroke is what lets one dash rule draw all of them
+// on reveal, whatever their real length. The animation lives in global.css,
+// behind the same .js-motion and reduced-motion guards as the scroll reveal.
 ---
 
 <svg
   class:list={['glyph', className]}
+  style={`color:${TONE_VAR[tone]}`}
   viewBox="0 0 16 16"
   fill="none"
   stroke="currentColor"
-  stroke-width="1.1"
+  stroke-width="1.25"
   stroke-linecap="round"
   stroke-linejoin="round"
   aria-hidden="true"
@@ -41,12 +50,12 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'trend' && (
       <>
-        <path d="M2 13.5V2" class="glyph-axis" />
-        <path d="M2 13.5h12" class="glyph-axis" />
-        <path class="glyph-line" d="M3.5 12 13 4" />
-        <circle cx="5" cy="9.6" r="0.9" fill="currentColor" stroke="none" />
-        <circle cx="8" cy="9" r="0.9" fill="currentColor" stroke="none" />
-        <circle cx="10.5" cy="5.6" r="0.9" fill="currentColor" stroke="none" />
+        <path d="M2 13.5V2" class="glyph-axis" pathLength="1" />
+        <path d="M2 13.5h12" class="glyph-axis" pathLength="1" />
+        <path d="M3.5 12 13 4" pathLength="1" />
+        <circle cx="5" cy="9.6" r="1" fill="currentColor" stroke="none" />
+        <circle cx="8" cy="9" r="1" fill="currentColor" stroke="none" />
+        <circle cx="10.5" cy="5.6" r="1" fill="currentColor" stroke="none" />
       </>
     )
   }
@@ -54,10 +63,10 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'ranges' && (
       <>
-        <path d="M2 13.5h12" class="glyph-axis" />
-        <path d="M2.5 3.5h5" />
-        <path d="M2.5 7h9" />
-        <path d="M2.5 10.5h3.5" />
+        <path d="M2 13.5h12" class="glyph-axis" pathLength="1" />
+        <path d="M2.5 3.5h5" pathLength="1" />
+        <path d="M2.5 7h9" pathLength="1" />
+        <path d="M2.5 10.5h3.5" pathLength="1" />
       </>
     )
   }
@@ -65,10 +74,10 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'panels' && (
       <>
-        <rect x="2" y="2" width="5.2" height="5.2" rx="0.8" />
-        <rect x="8.8" y="2" width="5.2" height="5.2" rx="0.8" />
-        <rect x="2" y="8.8" width="5.2" height="5.2" rx="0.8" />
-        <rect x="8.8" y="8.8" width="5.2" height="5.2" rx="0.8" />
+        <rect x="2" y="2" width="5.2" height="5.2" rx="0.8" pathLength="1" />
+        <rect x="8.8" y="2" width="5.2" height="5.2" rx="0.8" pathLength="1" />
+        <rect x="2" y="8.8" width="5.2" height="5.2" rx="0.8" pathLength="1" />
+        <rect x="8.8" y="8.8" width="5.2" height="5.2" rx="0.8" pathLength="1" />
       </>
     )
   }
@@ -76,9 +85,9 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'ticks' && (
       <>
-        <path d="M2 11h12" class="glyph-axis" />
-        <path d="M2 11V7.5M6 11V9M10 11V6M14 11V8.5" />
-        <path d="M2 4.5h12" class="glyph-axis" />
+        <path d="M2 11h12" class="glyph-axis" pathLength="1" />
+        <path d="M2 11V7.5M6 11V9M10 11V6M14 11V8.5" pathLength="1" />
+        <path d="M2 4.5h12" class="glyph-axis" pathLength="1" />
       </>
     )
   }
@@ -86,9 +95,9 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'flow' && (
       <>
-        <path d="M3 12.5 6.2 8l3.2 2.4L13 3.5" />
-        <circle cx="3" cy="12.5" r="1.1" />
-        <circle cx="13" cy="3.5" r="1.1" />
+        <path d="M3 12.5 6.2 8l3.2 2.4L13 3.5" pathLength="1" />
+        <circle cx="3" cy="12.5" r="1.2" />
+        <circle cx="13" cy="3.5" r="1.2" />
       </>
     )
   }
@@ -96,9 +105,9 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'lines' && (
       <>
-        <path d="M2.5 3.5h11" />
-        <path d="M2.5 7h11" />
-        <path d="M2.5 10.5h6.5" />
+        <path d="M2.5 3.5h11" pathLength="1" />
+        <path d="M2.5 7h11" pathLength="1" />
+        <path d="M2.5 10.5h6.5" pathLength="1" />
       </>
     )
   }
@@ -106,12 +115,12 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'scatter' && (
       <>
-        <path d="M2 13.5V2" class="glyph-axis" />
-        <path d="M2 13.5h12" class="glyph-axis" />
-        <circle cx="5" cy="10" r="0.9" fill="currentColor" stroke="none" />
-        <circle cx="7.5" cy="5" r="0.9" fill="currentColor" stroke="none" />
-        <circle cx="10" cy="8.5" r="0.9" fill="currentColor" stroke="none" />
-        <circle cx="12.5" cy="4" r="0.9" fill="currentColor" stroke="none" />
+        <path d="M2 13.5V2" class="glyph-axis" pathLength="1" />
+        <path d="M2 13.5h12" class="glyph-axis" pathLength="1" />
+        <circle cx="5" cy="10" r="1" fill="currentColor" stroke="none" />
+        <circle cx="7.5" cy="5" r="1" fill="currentColor" stroke="none" />
+        <circle cx="10" cy="8.5" r="1" fill="currentColor" stroke="none" />
+        <circle cx="12.5" cy="4" r="1" fill="currentColor" stroke="none" />
       </>
     )
   }
@@ -119,10 +128,10 @@ const { name, class: className = '' } = Astro.props;
   {
     name === 'target' && (
       <>
-        <path d="M2 13.5V2" class="glyph-axis" />
-        <path d="M2 13.5h12" class="glyph-axis" />
-        <path d="M2 5.5h8.5V13.5" class="glyph-axis" stroke-dasharray="1.6 1.6" />
-        <circle cx="10.5" cy="5.5" r="1.6" />
+        <path d="M2 13.5V2" class="glyph-axis" pathLength="1" />
+        <path d="M2 13.5h12" class="glyph-axis" pathLength="1" />
+        <path d="M2 5.5h8.5V13.5" class="glyph-axis" stroke-dasharray="1.6 1.6" pathLength="1" />
+        <circle cx="10.5" cy="5.5" r="1.8" />
       </>
     )
   }
@@ -130,13 +139,14 @@ const { name, class: className = '' } = Astro.props;
 
 <style>
   .glyph {
-    width: 1rem;
-    height: 1rem;
+    width: 1.25rem;
+    height: 1.25rem;
     flex: none;
+    overflow: visible;
   }
 
   /* Axes sit behind the data, the same as they do in the hero figure. */
   .glyph-axis {
-    opacity: 0.45;
+    opacity: 0.4;
   }
 </style>
