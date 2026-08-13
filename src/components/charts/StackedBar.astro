@@ -1,0 +1,166 @@
+---
+import { useTranslations, type Lang } from '../../i18n/ui';
+import { QUARTERS, MIX, MIX_SERIES } from '../../lib/sample-data';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Part-to-whole, and how the mix shifts. Four series is where direct labels
+// stop being optional — yellow and orange are on screen together — so values
+// ride the segments wherever they fit, and the legend carries the rest.
+//
+// Segments are separated by a 2px gap in the surface colour, never by a stroke
+// drawn around them. A border would add ink that isn't data.
+const Y0 = 20;
+const Y1 = 236;
+const MAX = 190;
+const COL = 88;
+const GAP = 2;
+const R = 4;
+
+const sh = (v: number) => (v / MAX) * (Y1 - Y0);
+const hues = MIX_SERIES.map((_, i) => `var(--color-series-${i + 1})`);
+const names = MIX_SERIES.map((k) => t(`demo.series.${k}` as 'demo.series.organic'));
+
+const columns = MIX.map((stack, q) => {
+  const cx = 104 + q * 148;
+  let acc = 0;
+  const segs = stack.map((v, s) => {
+    const isTop = s === stack.length - 1;
+    const yTop = Y1 - sh(acc + v);
+    const h = sh(v) - GAP;
+    acc += v;
+    return {
+      v,
+      s,
+      yTop,
+      h,
+      d: isTop
+        ? `M${cx} ${yTop + R} A${R} ${R} 0 0 1 ${cx + R} ${yTop} H${cx + COL - R} A${R} ${R} 0 0 1 ${cx + COL} ${yTop + R} V${yTop + h} H${cx} Z`
+        : `M${cx} ${yTop} H${cx + COL} V${yTop + h} H${cx} Z`,
+    };
+  });
+  return { cx, segs, total: stack.reduce((a, b) => a + b, 0), q };
+});
+
+const ticks = [0, 50, 100, 150];
+const uid = 'st';
+---
+
+<figure class="chart card" data-chart>
+  <figcaption class="chart-cap">
+    <div>
+      <h3 class="chart-title">{t('demo.mix.title')}</h3>
+      <p class="label mt-1.5">{t('demo.mix.unit')}</p>
+    </div>
+    <ul class="chart-legend">
+      {
+        names.map((n, i) => (
+          <li>
+            <span class="key-swatch" style={`background:${hues[i]}`} aria-hidden="true" />
+            {n}
+          </li>
+        ))
+      }
+    </ul>
+  </figcaption>
+
+  <svg viewBox="0 0 700 272" role="img" aria-label={t('demo.mix.title')}>
+    <defs>
+      {
+        columns.map((_, q) => (
+          <clipPath id={`${uid}-rise-${q}`}>
+            <rect class="rise-rect" style={`--i:${q}`} x="0" y="0" width="700" height="272" />
+          </clipPath>
+        ))
+      }
+    </defs>
+
+    {
+      ticks.map((v) => (
+        <>
+          <line class="gridline" x1="52" y1={Y1 - sh(v)} x2="660" y2={Y1 - sh(v)} />
+          <text class="axis-text" x="42" y={Y1 - sh(v) + 4} text-anchor="end">
+            {v}
+          </text>
+        </>
+      ))
+    }
+
+    {
+      columns.map((col) => (
+        <g clip-path={`url(#${uid}-rise-${col.q})`}>
+          {col.segs.map((seg) => (
+            <>
+              <path d={seg.d} fill={hues[seg.s]} />
+              {/* Only where the text genuinely fits — a clipped label is worse
+                  than no label, and the value stays in the legend's tooltip
+                  and the segment's own title either way. */}
+              {seg.h > 24 && (
+                <text
+                  class="seg-value"
+                  x={col.cx + COL / 2}
+                  y={seg.yTop + seg.h / 2 + 4}
+                  text-anchor="middle"
+                >
+                  {seg.v}
+                </text>
+              )}
+            </>
+          ))}
+          <text class="mark-value" x={col.cx + COL / 2} y={Y1 - sh(col.total) - 12} text-anchor="middle">
+            {col.total}K
+          </text>
+        </g>
+      ))
+    }
+
+    <line class="axisline" x1="52" y1={Y1} x2="660" y2={Y1}></line>
+    {
+      columns.map((col) => (
+        <text class="axis-text" x={col.cx + COL / 2} y={Y1 + 24} text-anchor="middle">
+          {QUARTERS[col.q]}
+        </text>
+      ))
+    }
+  </svg>
+</figure>
+
+<style>
+  .rise-rect {
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+
+  .seg-value {
+    font-size: 12px;
+    font-weight: 500;
+    /* Set inside a coloured fill — the one place a label may leave the ink
+       tokens. All four series hues are dark enough for white to clear. */
+    fill: #ffffff;
+  }
+
+  /* Hover grows each column out of the baseline, left to right. */
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .chart:hover .rise-rect {
+      animation-name: rise-col;
+      animation-duration: 0.85s;
+      animation-timing-function: var(--ease-out);
+      animation-delay: calc(var(--i, 0) * 90ms);
+      animation-fill-mode: both;
+    }
+  }
+
+  @keyframes rise-col {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+</style>

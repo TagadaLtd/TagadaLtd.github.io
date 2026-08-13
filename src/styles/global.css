@@ -438,6 +438,90 @@
     color: var(--color-ink);
   }
 
+  /* --- Chart chrome ------------------------------------------------------
+     Shared by every chart in src/components/charts/. Grid and axes are
+     recessive — hairline, solid, never dashed — because the data is the only
+     thing allowed to be loud. Text always wears an ink token; the coloured
+     mark beside it carries identity. */
+  .chart {
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+  .chart:hover {
+    transform: none; /* charts don't lift; their contents animate instead */
+  }
+  .chart-cap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .chart-title {
+    font-size: var(--text-h3);
+    margin: 0;
+  }
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    color: var(--color-ink-2);
+  }
+  .chart-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .key-swatch,
+  .key-line {
+    flex: none;
+    border-radius: 2px;
+  }
+  .key-swatch {
+    width: 10px;
+    height: 10px;
+  }
+  .key-line {
+    width: 16px;
+    height: 2px;
+  }
+
+  .chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .chart .gridline {
+    stroke: var(--color-grid);
+    stroke-width: 1;
+  }
+  .chart .axisline {
+    stroke: var(--color-line-strong);
+    stroke-width: 1;
+  }
+  .chart .axis-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    fill: var(--color-ink-3);
+  }
+  .chart .mark-label {
+    font-size: 12px;
+    fill: var(--color-ink-2);
+  }
+  .chart .mark-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    fill: var(--color-ink);
+  }
+
   /* Tertiary navigation. The arrow is a separate span so it can move without
      dragging the label's letter-spacing with it. */
   .link-arrow {

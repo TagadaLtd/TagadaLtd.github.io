@@ -81,6 +81,10 @@ const home = defineCollection({
       title: z.string(),
       items: z.array(z.object({ title: z.string(), body: z.string() })),
     }),
+    // The dashboard demo. `note` is the on-page disclaimer for its sample
+    // figures and is required for exactly that reason — the section must not
+    // be able to ship silently claiming the numbers are real.
+    dashboard: z.object({ label: z.string(), title: z.string(), note: z.string() }),
     selectedWork: z.object({ label: z.string(), title: z.string(), cta: z.string() }),
     proof: z.object({
       label: z.string(),

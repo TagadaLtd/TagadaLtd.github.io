@@ -71,6 +71,16 @@ content:
             fields:
               - { name: title, label: Title, type: string }
               - { name: body, label: Body, type: text }
+      - name: dashboard
+        label: Dashboards demo
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: title, label: Title, type: string }
+          - name: note
+            label: Sample-data disclaimer (shown on the page)
+            type: text
+            description: The charts use invented figures. This line says so — keep it honest.
       - name: selectedWork
         label: Selected work
         type: object
@@ -190,6 +200,16 @@ content:
             fields:
               - { name: title, label: Titre, type: string }
               - { name: body, label: Texte, type: text }
+      - name: dashboard
+        label: Démo tableaux de bord
+        type: object
+        fields:
+          - { name: label, label: Libellé de section, type: string }
+          - { name: title, label: Titre, type: string }
+          - name: note
+            label: Mention « données d'exemple » (affichée sur la page)
+            type: text
+            description: Les graphiques utilisent des chiffres inventés. Cette ligne le dit.
       - name: selectedWork
         label: Réalisations choisies
         type: object

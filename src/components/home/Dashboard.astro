@@ -1,0 +1,168 @@
+---
+import Section from '../Section.astro';
+import StatTile from '../StatTile.astro';
+import LineChart from '../charts/LineChart.astro';
+import BarChart from '../charts/BarChart.astro';
+import StackedBar from '../charts/StackedBar.astro';
+import { useTranslations, type Lang } from '../../i18n/ui';
+import { KPIS } from '../../lib/sample-data';
+
+interface Props {
+  lang: Lang;
+  dashboard: { label: string; title: string; note: string };
+}
+
+const { lang, dashboard } = Astro.props;
+const t = useTranslations(lang);
+
+// A capability demo, not a claim. Four forms doing four different jobs, in the
+// order a dashboard is actually read: the headline numbers first, then the
+// trend behind them, then where they came from, then how the mix is shifting.
+//
+// Every figure in here is invented, and `note` says so on the page. The data
+// lives in src/lib/sample-data.ts with the same warning at the top — it must
+// never migrate into the Proof strip or a case study, which are the parts of
+// this site that make claims (CLAUDE.md: never invent metrics).
+const kpiLabels = ['demo.kpi.sessions', 'demo.kpi.convRate', 'demo.kpi.cpa', 'demo.kpi.revenue'] as const;
+---
+
+<Section label={dashboard.label} title={dashboard.title} icon="panels" tone="ai" id="dashboard">
+  <p class="measure -mt-6 mb-10 text-sm text-ink-3">{dashboard.note}</p>
+
+  {/* 1 — the headline numbers. Not charts, on purpose: a single current value
+      does not need axes. */}
+  <dl class="kpi-row" data-chart data-countup-row>
+    {
+      KPIS.map((k, i) => (
+        <StatTile
+          label={t(kpiLabels[i])}
+          value={k.value}
+          delta={{ value: k.delta.value, period: t('demo.kpi.period'), tone: k.delta.tone }}
+          trend={k.trend}
+          index={i}
+        />
+      ))
+    }
+  </dl>
+
+  <p class="label mt-6">{t('demo.hint')}</p>
+
+  {/* 2, 3, 4 — trend, then ranking, then composition. */}
+  <div class="mt-10 grid gap-6" data-reveal-group>
+    <div data-reveal><LineChart lang={lang} /></div>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div data-reveal><BarChart lang={lang} /></div>
+      <div data-reveal><StackedBar lang={lang} /></div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .kpi-row {
+    display: grid;
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+
+  /* Each tile is a cell of the row, so the hairlines between them are the grid
+     gap showing through rather than borders on the tiles. */
+  .kpi-row :global(.stat-tile) {
+    background: var(--color-surface);
+    padding: 1.4rem 1.5rem 1.5rem;
+  }
+</style>
+
+<script>
+  // Numbers count up from zero on hover — fast, and only ever to the value that
+  // is already in the HTML. The text is read from the DOM rather than passed in,
+  // so the resting state is the source of truth and a failure here leaves the
+  // real figure on screen.
+  //
+  // Runs once when the row first appears too, since a KPI row that only comes
+  // alive on hover looks broken on a touch device.
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  type Parsed = { prefix: string; suffix: string; target: number; decimals: number };
+
+  function parse(text: string): Parsed | null {
+    // Split "€182K" / "48,210" / "3.1%" into prefix, number, suffix.
+    const m = text.match(/^([^\d-]*)(-?[\d.,]+)(.*)$/);
+    if (!m) return null;
+    const raw = m[2].replace(/,/g, '');
+    const target = Number(raw);
+    if (!Number.isFinite(target)) return null;
+    const dot = raw.indexOf('.');
+    return {
+      prefix: m[1],
+      suffix: m[3],
+      target,
+      decimals: dot === -1 ? 0 : raw.length - dot - 1,
+    };
+  }
+
+  function format(p: Parsed, v: number, grouped: boolean) {
+    const n = p.decimals ? v.toFixed(p.decimals) : String(Math.round(v));
+    return p.prefix + (grouped ? Number(n).toLocaleString('en-GB') : n) + p.suffix;
+  }
+
+  function countUp(el: HTMLElement) {
+    if (REDUCED.matches) return;
+    const final = el.dataset.final ?? el.textContent ?? '';
+    el.dataset.final = final;
+    const p = parse(final);
+    if (!p) return;
+    if (el.dataset.running === '1') return;
+    el.dataset.running = '1';
+
+    const grouped = final.includes(',');
+    const DURATION = 620;
+    const start = performance.now();
+
+    const frame = (now: number) => {
+      const k = Math.min(1, (now - start) / DURATION);
+      // Fast out of the gate, settling into the value — the same easing curve
+      // the rest of the site uses.
+      const eased = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(p, p.target * eased, grouped);
+      if (k < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        el.textContent = final; // land exactly on the authored string
+        el.dataset.running = '0';
+      }
+    };
+    requestAnimationFrame(frame);
+  }
+
+  const row = document.querySelector<HTMLElement>('[data-countup-row]');
+  if (row) {
+    const values = Array.from(row.querySelectorAll<HTMLElement>('.stat-tile .num'));
+    values.forEach((el) => (el.dataset.final = el.textContent ?? ''));
+
+    const runAll = () => values.forEach(countUp);
+
+    // Hover replays it, but only where hovering is a real gesture.
+    if (window.matchMedia('(hover: hover)').matches) {
+      row.addEventListener('mouseenter', runAll);
+    }
+
+    // And once on arrival, so the row is not inert on a touch screen.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            runAll();
+            io.disconnect();
+          }
+        },
+        { threshold: 0.3 }
+      );
+      io.observe(row);
+    }
+  }
+</script>

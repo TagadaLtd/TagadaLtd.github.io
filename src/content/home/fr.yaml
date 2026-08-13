@@ -56,6 +56,14 @@ pillars:
         Les fondamentaux du machine learning appliqués là où ils se rentabilisent — scoring,
         classification, et l’automatisation de ce que personne n’aime faire deux fois.
 
+dashboard:
+  label: "Tableaux de bord"
+  title: "Le reporting que vous auriez vraiment."
+  note: >-
+    Données d'exemple d'un bout à l'autre — ces graphiques montrent les formes que je
+    construis, pas les résultats d'un client. Survolez-les pour rejouer l'arrivée des
+    chiffres.
+
 selectedWork:
   label: "Réalisations choisies"
   title: "Des problèmes, et ce qui a changé."

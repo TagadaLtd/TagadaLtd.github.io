@@ -7,6 +7,7 @@ import Hero from '../../components/home/Hero.astro';
 import Thesis from '../../components/home/Thesis.astro';
 import Method from '../../components/home/Method.astro';
 import Pillars from '../../components/home/Pillars.astro';
+import Dashboard from '../../components/home/Dashboard.astro';
 import Proof from '../../components/home/Proof.astro';
 import Process from '../../components/home/Process.astro';
 import Close from '../../components/home/Close.astro';
@@ -35,6 +36,7 @@ const title =
   <Thesis thesis={home.thesis} />
   <Method method={home.method} />
   <Pillars lang={lang} pillars={home.pillars} />
+  <Dashboard lang={lang} dashboard={home.dashboard} />
 
   <Section label={home.selectedWork.label} title={home.selectedWork.title} icon="panels" tone="ai">
     {

@@ -52,6 +52,36 @@ export const ui = {
     'blog.readingTime': 'min read',
     'blog.readPost': 'Read',
 
+
+    // Demo dashboard labels. These name sample data, not results — the section
+    // itself carries the disclaimer (see home/*.yaml).
+    'demo.kpi.sessions': 'Sessions',
+    'demo.kpi.convRate': 'Conversion rate',
+    'demo.kpi.cpa': 'Cost per acquisition',
+    'demo.kpi.revenue': 'Revenue',
+    'demo.kpi.period': 'vs previous 30 days',
+
+    'demo.trend.title': 'Sessions by month',
+    'demo.trend.unit': 'Thousands of sessions',
+    'demo.channels.title': 'Conversions by channel',
+    'demo.channels.unit': 'Last 30 days',
+    'demo.mix.title': 'Channel mix by quarter',
+    'demo.mix.unit': 'Thousands of sessions',
+
+    'demo.series.organic': 'Organic',
+    'demo.series.paid': 'Paid',
+    'demo.series.email': 'Email',
+    'demo.series.referral': 'Referral',
+
+    'demo.channel.organicSearch': 'Organic search',
+    'demo.channel.paidSearch': 'Paid search',
+    'demo.channel.email': 'Email',
+    'demo.channel.paidSocial': 'Paid social',
+    'demo.channel.direct': 'Direct',
+    'demo.channel.referral': 'Referral',
+
+    'demo.hint': 'Hover a chart to replay it',
+
     'placeholder.badge': 'Placeholder — awaiting real content',
   },
   fr: {
@@ -92,6 +122,34 @@ export const ui = {
     'work.year': 'Année',
     'blog.readingTime': 'min de lecture',
     'blog.readPost': 'Lire',
+
+
+    'demo.kpi.sessions': 'Sessions',
+    'demo.kpi.convRate': 'Taux de conversion',
+    'demo.kpi.cpa': 'Coût par acquisition',
+    'demo.kpi.revenue': 'Chiffre d’affaires',
+    'demo.kpi.period': 'vs 30 jours précédents',
+
+    'demo.trend.title': 'Sessions par mois',
+    'demo.trend.unit': 'Milliers de sessions',
+    'demo.channels.title': 'Conversions par canal',
+    'demo.channels.unit': 'Sur 30 jours',
+    'demo.mix.title': 'Répartition des canaux par trimestre',
+    'demo.mix.unit': 'Milliers de sessions',
+
+    'demo.series.organic': 'Organique',
+    'demo.series.paid': 'Payant',
+    'demo.series.email': 'E-mail',
+    'demo.series.referral': 'Référents',
+
+    'demo.channel.organicSearch': 'Recherche organique',
+    'demo.channel.paidSearch': 'Recherche payante',
+    'demo.channel.email': 'E-mail',
+    'demo.channel.paidSocial': 'Social payant',
+    'demo.channel.direct': 'Direct',
+    'demo.channel.referral': 'Référents',
+
+    'demo.hint': 'Survolez un graphique pour le rejouer',
 
     'placeholder.badge': 'Contenu provisoire — en attente du contenu réel',
   },

@@ -53,6 +53,13 @@ pillars:
         Machine learning fundamentals applied where they pay for themselves — scoring,
         classification, and the automation of work nobody enjoys doing twice.
 
+dashboard:
+  label: "Dashboards"
+  title: "The reporting you would actually get."
+  note: >-
+    Sample data throughout — these show the chart forms I build, not results from a
+    client. Hover any of them to replay how the numbers arrived.
+
 selectedWork:
   label: "Selected work"
   title: "Problems, and what changed."
